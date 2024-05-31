@@ -4,16 +4,16 @@
 
 ## Installation
 
-To install the `convert2anndata` package from GitHub, you can use the `devtools` package in R. If you don't have `devtools` installed, you can install it first:
+To install the `convert2anndata` package from GitHub through ssh, you can use the `remotes` package in R. If you don't have `remotes` installed, you can install it first:
 
 ```r
-install.packages("devtools")
+install.packages("remotes")
 ```
 
 Then, install `convert2anndata` from GitHub:
 
 ```r
-devtools::install_github("settylab/convert2anndata")
+remotes::install_git("git@github.com:settylab/convert2anndata.git")
 ```
 
 ## Usage
