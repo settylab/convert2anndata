@@ -46,6 +46,14 @@ convert_to_anndata <- function(sce, assayName = "counts", useAltExp = TRUE) {
   # Process obs and var data
   obs_data <- extract_data(colData, "obs/colData", sce)
   var_data <- extract_data(rowData, "var/rowData", sce)
+
+  # Filter out reducedDims from obs_data
+  available_reductions <- names(reducedDims(sce))
+  reduction_prefixes <- paste0(tolower(available_reductions), "\\.")
+  reduction_columns <- grep("^reducedDims\\.", names(obs_data$data), value = TRUE)
+  if (length(reduction_columns) > 0) {
+    obs_data$data <- obs_data$data[, !(names(obs_data$data) %in% reduction_columns), drop = FALSE]
+  }
   
   # Ensure obs and var are correctly provided
   if (nrow(obs_data$data) != nrow(X) || ncol(obs_data$data) == 0) {
