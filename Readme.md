@@ -12,16 +12,53 @@ To install the `convert2anndata` package from GitHub through ssh, you can use th
 install.packages("remotes")
 ```
 
-Then, install `convert2anndata` from GitHub:
+Then, install the necessary Bioconductor packages:
+
+```r
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+    install.packages("BiocManager")
+}
+BiocManager::install(c("SingleCellExperiment", "SummarizedExperiment", "S4Vectors"))
+```
+
+Finally, install `convert2anndata` from GitHub:
 
 ```r
 remotes::install_github("settylab/convert2anndata")
 ```
 
-Alternatively, install from GitHub athenticating through ssh:
+Alternatively, install from GitHub authenticating through ssh:
 
 ```r
 remotes::install_git("git@github.com:settylab/convert2anndata.git")
+```
+
+### One-step Installation with `renv`
+
+You can set up the package and its dependencies in a project-specific environment using `renv`. This approach ensures that all dependencies are installed in a consistent environment.
+
+First, install `renv` if you don't already have it:
+
+```r
+install.packages("renv")
+```
+
+Then, you can use the following steps to set up the environment and install all necessary packages, including Bioconductor packages, in one go:
+
+```r
+# Initialize renv in your project directory
+renv::init(bare=TRUE)
+
+# Install the necessary packages, including Bioconductor packages
+renv::install(c(
+    "bioc::SingleCellExperiment",
+    "bioc::SummarizedExperiment",
+    "bioc::S4Vectors",
+    "git@github.com:settylab/convert2anndata.git"
+))
+
+# Snapshot the environment
+renv::snapshot(type="all")
 ```
 
 ## Usage
