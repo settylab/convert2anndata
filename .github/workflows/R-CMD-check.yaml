@@ -29,6 +29,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install anndata
 
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev
+          
       - name: Install Bioconductor packages
         run: |
           if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
