@@ -49,7 +49,7 @@ seurat_obj <- readRDS("/path/to/input_file.rds")
 sce <- convert_seurat_to_sce(seurat_obj)
 
 # Convert to AnnData
-ad <- convert_to_anndata(sce, assay_name = "counts", useAltExp = TRUE)
+ad <- convert_to_anndata(sce, assayName = "counts", useAltExp = TRUE)
 
 # Save the AnnData object
 write_h5ad(ad, "/path/to/output_file.h5ad")
@@ -64,7 +64,7 @@ library(convert2anndata)
 sce <- readRDS("/path/to/input_file.rds")
 
 # Convert to AnnData
-ad <- convert_to_anndata(sce, assay_name = "counts", useAltExp = TRUE)
+ad <- convert_to_anndata(sce, assayName = "counts", useAltExp = TRUE)
 
 # Save the AnnData object
 write_h5ad(ad, "/path/to/output_file.h5ad")

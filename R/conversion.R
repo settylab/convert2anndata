@@ -17,7 +17,7 @@ timestamped_cat <- function(...) {
 #' The main assay is used as the primary data matrix in the AnnData object.
 #'
 #' @param sce A SingleCellExperiment object to be converted.
-#' @param assay_name The name of the assay to use as the main data matrix in AnnData. Defaults to "counts".
+#' @param assayName The name of the assay to use as the main data matrix in AnnData. Defaults to "counts".
 #' @param useAltExp Logical indicating whether to process and include alternative experiments (altExps). Defaults to TRUE.
 #' @return An AnnData object containing the data from the SingleCellExperiment object.
 #' @details The function first prints a summary of the input SingleCellExperiment object and checks for alternative experiments (altExps).
@@ -37,7 +37,7 @@ timestamped_cat <- function(...) {
 #' @import S4Vectors
 #' @import anndata
 #' @export
-convert_to_anndata <- function(sce, assay_name = "counts", useAltExp = TRUE) {
+convert_to_anndata <- function(sce, assayName = "counts", useAltExp = TRUE) {
 
   # Ensure SingleCellExperiment functions are loaded
   SingleCellExperiment::altExpNames
@@ -66,14 +66,14 @@ convert_to_anndata <- function(sce, assay_name = "counts", useAltExp = TRUE) {
       for (alt_exp in alt_exps) {
         timestamped_cat(sprintf("Starting processing of altExp '%s'...\n", alt_exp))
         alt_sce <- altExp(sce, alt_exp)
-        alt_assay_name <- assay_name
-        if (!(assay_name %in% names(assays(alt_sce)))) {
-          alt_assay_name <- names(assays(alt_sce))[1]
+        alt_assayName <- assayName
+        if (!(assayName %in% names(assays(alt_sce)))) {
+          alt_assayName <- names(assays(alt_sce))[1]
           timestamped_cat(sprintf("WARNING: The specified assay '%s' is not ",
                                   "available in altExp '%s'. Using '%s' instead.\n",
-                                  assay_name, alt_exp, alt_assay_name))
+                                  assayName, alt_exp, alt_assayName))
         }
-        alt_ad <- convert_to_anndata(alt_sce, alt_assay_name)
+        alt_ad <- convert_to_anndata(alt_sce, alt_assayName)
         alt_exps_data[[alt_exp]] <- alt_ad
         timestamped_cat(sprintf("Processed altExp '%s'.\n", alt_exp))
       }
@@ -86,13 +86,13 @@ convert_to_anndata <- function(sce, assay_name = "counts", useAltExp = TRUE) {
   }
 
   timestamped_cat(sprintf("Processing assay '%s' for anndata.X...\n", 
-                          assay_name))
-  if (!(assay_name %in% names(assays(sce)))) {
+                          assayName))
+  if (!(assayName %in% names(assays(sce)))) {
     timestamped_cat(
       sprintf(
         "Error: The specified assay '%s' is not available in the provided ",
         "SingleCellExperiment object.",
-        assay_name
+        assayName
       ),
       "Use -a or --assay to specify an available assay.\n"
     )
@@ -100,13 +100,13 @@ convert_to_anndata <- function(sce, assay_name = "counts", useAltExp = TRUE) {
                     paste(names(assays(sce)), collapse = ", "), "\n")
     quit(status = 1, save = "no")
   }
-  X <- Matrix::t(assay(sce, assay_name))
+  X <- Matrix::t(assay(sce, assayName))
   timestamped_cat(sprintf("Using '%s' assay as the main data matrix.\n", 
-                          assay_name))
+                          assayName))
   
-  timestamped_cat(sprintf("Processing assays other than '%s'...\n", assay_name))
+  timestamped_cat(sprintf("Processing assays other than '%s'...\n", assayName))
   all_assays <- assays(sce)
-  all_assays <- all_assays[!names(all_assays) %in% assay_name]
+  all_assays <- all_assays[!names(all_assays) %in% assayName]
   all_assays <- lapply(all_assays, Matrix::t)
   timestamped_cat("Assays processed.\n")
 
@@ -318,7 +318,7 @@ cli_convert <- function() {
     make_option(c("-a", "--assay"),
       type = "character", default = "counts",
       help = "The assay to use as the main matrix (anndata.X). Defaults to 'counts'.",
-      metavar = "assay_name"
+      metavar = "assayName"
     ),
     make_option(c("-d", "--disable-recursive-altExp"),
       action = "store_true", default = FALSE,

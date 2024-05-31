@@ -4,12 +4,12 @@
 \alias{convert_to_anndata}
 \title{Convert SingleCellExperiment to AnnData}
 \usage{
-convert_to_anndata(sce, assay_name = "counts", useAltExp = TRUE)
+convert_to_anndata(sce, assayName = "counts", useAltExp = TRUE)
 }
 \arguments{
 \item{sce}{A SingleCellExperiment object to be converted.}
 
-\item{assay_name}{The name of the assay to use as the main data matrix in AnnData. Defaults to "counts".}
+\item{assayName}{The name of the assay to use as the main data matrix in AnnData. Defaults to "counts".}
 
 \item{useAltExp}{Logical indicating whether to process and include alternative experiments (altExps). Defaults to TRUE.}
 }
