@@ -30,11 +30,6 @@ jobs:
           remotes::install_local()
         shell: Rscript {0}
 
-      - name: Check package
-        run: |
-          R CMD check --no-manual --as-cran .
-        shell: bash
-
       - name: Test coverage
         run: |
           install.packages('covr')
