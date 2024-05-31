@@ -6,15 +6,13 @@
 
 ## Installation
 
-### Standard Installation
-
-To install the `convert2anndata` package from GitHub, you can use the `remotes` package in R. If you don't have `remotes` installed, you can install it first:
+To install the `convert2anndata` package from GitHub through ssh, you can use the `remotes` package in R. If you don't have `remotes` installed, you can install it first:
 
 ```r
 install.packages("remotes")
 ```
 
-Next, install the necessary Bioconductor packages:
+Then, install the necessary Bioconductor packages:
 
 ```r
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
@@ -29,7 +27,7 @@ Finally, install `convert2anndata` from GitHub:
 remotes::install_github("settylab/convert2anndata")
 ```
 
-Alternatively, authenticating via SSH:
+Alternatively, install from GitHub authenticating through ssh:
 
 ```r
 remotes::install_git("git@github.com:settylab/convert2anndata.git")
@@ -37,42 +35,43 @@ remotes::install_git("git@github.com:settylab/convert2anndata.git")
 
 ### Installation with `renv`
 
-To set up the package and its dependencies in a project-specific environment using `renv`:
+You can set up the package and its dependencies in a project-specific environment using `renv`. This approach ensures that all dependencies are installed in a consistent environment.
 
-1. Install `renv` if you don't have it already:
+First, install `renv` if you don't already have it:
 
 ```r
 install.packages("renv")
 ```
 
-2. Initialize `renv` in your project directory:
+Then, you can use the following steps to set up the environment and install all necessary packages, including Bioconductor packages, in one go:
 
 ```r
-renv::init(bare = TRUE)
-```
+# Initialize renv in your project directory
+renv::init(bare=TRUE)
 
-3. Install the necessary packages, including Bioconductor packages, and the `convert2anndata` package:
-
-```r
+# Install the necessary packages, including Bioconductor packages
 renv::install(c(
     "bioc::SingleCellExperiment",
     "bioc::SummarizedExperiment",
     "bioc::S4Vectors"
 ))
+    
 renv::install("git@github.com:settylab/convert2anndata.git")
+
+# Snapshot the environment
+renv::snapshot(type="all")
 ```
 
-4. Snapshot the environment to save the state of the project’s library:
+### Note for Seurat Objects
 
-```r
-renv::snapshot(type = "all")
-```
+If you want to convert Seurat objects, you will also need to install the Seurat package. Follow the installation instructions on the [Seurat website](https://satijalab.org/seurat/articles/install.html).
+
 
 ## Usage
 
 ### Command Line Usage
 
-You can use the `convert2anndata` package from the command line to convert `SingleCellExperiment` or `Seurat` objects stored in RDS files to `AnnData` format (H5AD files):
+You can use the `convert2anndata` package from the command line to convert `SingleCellExperiment` or `Seurat` objects stored in RDS files to `AnnData` format (H5AD files). Here is an example of how to use it:
 
 ```sh
 Rscript -e "convert2anndata::cli_convert()" -i /path/to/input_file.rds -o /path/to/output_file.h5ad
