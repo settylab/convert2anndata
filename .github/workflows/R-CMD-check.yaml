@@ -33,7 +33,7 @@ jobs:
       - name: Test coverage
         run: |
           install.packages('covr')
-          Rscript -e 'covr::codecov()'
+          covr::codecov()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        shell: bash
+        shell: Rscript {0}
