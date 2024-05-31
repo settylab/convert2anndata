@@ -1,0 +1,8 @@
+coverage:
+  precision: 2
+  round: down
+  color: green
+
+comment:
+  layout: "reach, diff, flags, files, footer"
+  require_changes: true

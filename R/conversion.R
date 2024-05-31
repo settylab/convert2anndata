@@ -24,9 +24,6 @@
 #' @export
 convert_to_anndata <- function(sce, assayName = "counts", useAltExp = TRUE) {
 
-  # Ensure necessary functions are loaded
-  anndata::AnnData
-
   # Print a summary of the input SCE object
   timestamped_cat("Summary of SingleCellExperiment object:\n\n")
   print(sce)
@@ -50,21 +47,38 @@ convert_to_anndata <- function(sce, assayName = "counts", useAltExp = TRUE) {
   obs_data <- extract_data(colData, "obs/colData", sce)
   var_data <- extract_data(rowData, "var/rowData", sce)
   
-  # Process metadata and pairwise matrices
-  uns <- process_metadata_and_pairwise(sce, alt_exps, X)
+  # Ensure obs and var are correctly provided
+  if (nrow(obs_data$data) != nrow(X) || ncol(obs_data$data) == 0) {
+    obs_data$data <- NULL
+  }
+  
+  if (nrow(var_data$data) != ncol(X) || ncol(var_data$data) == 0) {
+    var_data$data <- NULL
+  }
 
-  # Create AnnData object
-  ad <- AnnData(
+  # Process metadata and pairwise matrices
+  uns_data <- process_metadata_and_pairwise(sce, alt_exps, X)
+
+  # Create a list of arguments for AnnData
+  anndata_args <- list(
     X = X,
     layers = layers,
-    obs = obs_data$data,
-    var = var_data$data,
     obsm = obsm,
-    varm = uns$varm,
-    obsp = uns$obsp,
-    varp = uns$varp,
-    uns = uns$uns
+    varm = uns_data$varm,
+    obsp = uns_data$obsp,
+    varp = uns_data$varp,
+    uns = uns_data$uns
   )
+
+  if (!is.null(obs_data$data)) {
+    anndata_args$obs <- obs_data$data
+  }
+  if (!is.null(var_data$data)) {
+    anndata_args$var <- var_data$data
+  }
+
+  # Create AnnData object using the arguments list
+  ad <- do.call(AnnData, anndata_args)
 
   timestamped_cat("Summary of the AnnData object:\n\n")
   print(ad)
@@ -93,7 +107,6 @@ convert_to_anndata <- function(sce, assayName = "counts", useAltExp = TRUE) {
 #' seurat_obj <- CreateSeuratObject(counts = matrix(1:4, ncol = 2))
 #' sce <- convert_seurat_to_sce(seurat_obj)
 #' }
-#' @import SingleCellExperiment
 #' @export
 convert_seurat_to_sce <- function(data) {
   object_class <- class(data)
@@ -103,13 +116,11 @@ convert_seurat_to_sce <- function(data) {
     timestamped_cat("Summary of input Seurat object:\n\n")
     suppressPackageStartupMessages(print(data))
     cat("\n")
+
     # Use tryCatch to safely check for Seurat v2 or v3 indicators
-    raw_data <- tryCatch(
-      {
-        if (!is.null(data@raw.data)) data@raw.data else NULL
-      },
-      error = function(e) NULL
-    )
+    raw_data <- tryCatch({
+      if (!is.null(data@raw.data)) data@raw.data else NULL
+    }, error = function(e) NULL)
 
     if (!is.null(raw_data)) {
       timestamped_cat("Old Seurat v2 object detected, attempting to update...\n")
@@ -117,8 +128,13 @@ convert_seurat_to_sce <- function(data) {
     }
 
     # Convert to SingleCellExperiment
-    sce <- Seurat::as.SingleCellExperiment(data)
-  } else if ("SingleCellExperiment" %in% class(data)) {
+    sce <- tryCatch({
+      Seurat::as.SingleCellExperiment(data)
+    }, error = function(e) {
+      # Handle the case where layers might be empty
+      Seurat::as.SingleCellExperiment(data, assay = NULL)
+    })
+  } else if ("SingleCellExperiment" %in% object_class) {
     sce <- data
   } else {
     suppressPackageStartupMessages({
@@ -126,84 +142,4 @@ convert_seurat_to_sce <- function(data) {
     })
   }
   return(sce)
-}
-
-#' Command Line Interface for convert2anndata
-#'
-#' This function serves as a command line interface for the convert2anndata package.
-#' It parses command line arguments and calls the appropriate functions to convert
-#' a SingleCellExperiment or Seurat object to an AnnData object.
-#'
-#' @import optparse
-#' @import anndata
-#' @export
-cli_convert <- function() {
-  anndata::write_h5ad
-
-  # Description and help
-  description <- paste(
-    "This script converts a potentially old Seurat object or a SingleCellExperiment",
-    "stored in an RDS file into an AnnData object stored as an H5AD file.",
-    "The user can specify input and output file paths, with an option to change",
-    "the output filename from .rds to .h5ad if no output is specified."
-  )
-
-  # Set up command-line options
-  option_list <- list(
-    make_option(c("-i", "--input"),
-      type = "character", default = NULL,
-      help = "Path to the input RDS file containing the SingleCellExperiment object. This option is required.",
-      metavar = "file"
-    ),
-    make_option(c("-o", "--output"),
-      type = "character", default = NULL,
-      help = paste(
-        "Path to the output H5AD file. If not specified,",
-        "the output path is derived by replacing the .rds",
-        "extension of the input path with .h5ad."
-      ),
-      metavar = "file"
-    ),
-    make_option(c("-a", "--assay"),
-      type = "character", default = "counts",
-      help = "The assay to use as the main matrix (anndata.X). Defaults to 'counts'.",
-      metavar = "assayName"
-    ),
-    make_option(c("-d", "--disable-recursive-altExp"),
-      action = "store_true", default = FALSE,
-      help = "Disable recursive recovery of altExperiments and discard them instead.",
-      metavar = "boolean"
-    )
-  )
-
-  # Parse command-line arguments
-  opt_parser <- OptionParser(option_list = option_list, description = description)
-  opt <- parse_args(opt_parser)
-
-  # Check if input file is provided
-  if (is.null(opt$input)) {
-    stop("No input file provided. Use --input to specify the RDS file.", 
-         call. = FALSE)
-  }
-
-  # Set output filename
-  if (is.null(opt$output)) {
-    opt$output <- sub("\\.[rR][dD][sS]$", ".h5ad", opt$input, ignore.case = TRUE)
-  }
-
-  # Load data
-  timestamped_cat("Loading data from:", opt$input, "\n")
-  data <- readRDS(opt$input)
-
-  # Convert to SingleCellExperiment if necessary
-  sce <- convert_seurat_to_sce(data)
-  timestamped_cat("Data loaded and converted successfully if needed.\n")
-
-  # Convert SCE to AnnData
-  ad <- convert_to_anndata(sce, opt$assay, useAltExp = !isTRUE(opt$`disable-recursive-altExp`))
-
-  # Save AnnData object
-  timestamped_cat("Saving the AnnData object to:", opt$output, "\n")
-  write_h5ad(ad, opt$output)
-  timestamped_cat("Conversion complete:", opt$output, "\n")
 }
