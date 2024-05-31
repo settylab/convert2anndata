@@ -28,7 +28,7 @@ jobs:
         shell: Rscript {0}
         run: |
           install.packages("BiocManager")
-          BiocManager::install(version = "3.16")
+          BiocManager::install()
           BiocManager::install(c("SingleCellExperiment", "SummarizedExperiment", "S4Vectors"))
 
       - name: Install R package dependencies
