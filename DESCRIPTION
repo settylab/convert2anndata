@@ -9,12 +9,17 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.1
-URL: http://setty-lab.org
-BugReports: https://github.com/settylab/convert2anndata
+URL: https://research.fredhutch.org/setty/en.html
+BugReports: https://github.com/settylab/convert2anndata/issues
 Imports:
     SingleCellExperiment,
     anndata,
-    optparse
+    optparse,
+    Matrix,
+    S4Vectors,
+    SummarizedExperiment,
+    methods
 Suggests:
     testthat (>= 3.0.0),
     covr
+biocViews: SingleCellData, DataImport, Transcriptomics, Sequencing, RNASeq
