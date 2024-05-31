@@ -1,15 +1,3 @@
-#' Print Messages with Timestamp
-#'
-#' This function prints messages with a timestamp.
-#'
-#' @param ... The messages to print.
-#' @return None. The function prints the messages to the console.
-#' @examples
-#' timestamped_cat("This is a message.")
-timestamped_cat <- function(...) {
-  cat(format(Sys.time(), "[%Y-%m-%d %H:%M:%S]"), ...)
-}
-
 #' Convert SingleCellExperiment to AnnData
 #'
 #' This function converts a SingleCellExperiment (SCE) object to an AnnData object.
@@ -32,19 +20,11 @@ timestamped_cat <- function(...) {
 #' sce <- SingleCellExperiment::SingleCellExperiment(list(counts = matrix(1:4, ncol = 2)))
 #' ad <- convert_to_anndata(sce)
 #' }
-#' @import SingleCellExperiment
-#' @import SummarizedExperiment
-#' @import S4Vectors
-#' @import anndata
+#' @importFrom anndata AnnData
 #' @export
 convert_to_anndata <- function(sce, assayName = "counts", useAltExp = TRUE) {
 
-  # Ensure SingleCellExperiment functions are loaded
-  SingleCellExperiment::altExpNames
-  SingleCellExperiment::altExp
-  SingleCellExperiment::removeAltExps
-  SummarizedExperiment::assay
-  S4Vectors::metadata
+  # Ensure necessary functions are loaded
   anndata::AnnData
 
   # Print a summary of the input SCE object
@@ -52,172 +32,38 @@ convert_to_anndata <- function(sce, assayName = "counts", useAltExp = TRUE) {
   print(sce)
   cat("\n")
   
-  timestamped_cat("Checking for altExperiments...\n")
-  alt_exps <- altExpNames(sce)
-  alt_exps_data = list()
-  if (length(alt_exps) > 0) {
-    timestamped_cat("WARNING: The SingleCellExperiment object contains",
-                    "alternative experiments (altExps) which cannot ideally be",
-                    "reflected in the AnnData object.\n")
-    if (isTRUE(useAltExp)) {
-      timestamped_cat("The following altExps will be processed and stored in",
-                      "uns['altExperiments']: ",
-                      paste(alt_exps, collapse = ", "), "\n")
-      for (alt_exp in alt_exps) {
-        timestamped_cat(sprintf("Starting processing of altExp '%s'...\n", alt_exp))
-        alt_sce <- altExp(sce, alt_exp)
-        alt_assayName <- assayName
-        if (!(assayName %in% names(assays(alt_sce)))) {
-          alt_assayName <- names(assays(alt_sce))[1]
-          timestamped_cat(sprintf("WARNING: The specified assay '%s' is not ",
-                                  "available in altExp '%s'. Using '%s' instead.\n",
-                                  assayName, alt_exp, alt_assayName))
-        }
-        alt_ad <- convert_to_anndata(alt_sce, alt_assayName)
-        alt_exps_data[[alt_exp]] <- alt_ad
-        timestamped_cat(sprintf("Processed altExp '%s'.\n", alt_exp))
-      }
-    } else {
-      timestamped_cat("Recursive recovery of altExperiments is disabled,",
-                      "removing experiments:",
-                      paste(alt_exps, collapse = ", "), "\n")
-    }
-    sce <- removeAltExps(sce)
-  }
+  # Process altExperiments
+  alt_exps_data <- process_alt_experiments(sce, assayName, useAltExp)
+  sce <- alt_exps_data$sce
+  alt_exps <- alt_exps_data$alt_exps
+  
+  # Process the main assay
+  X <- process_main_assay(sce, assayName)
+  
+  # Process other assays
+  layers <- process_other_assays(sce, assayName)
+  
+  # Process dimensional reductions
+  obsm <- process_dimensional_reductions(sce)
+  
+  # Process obs and var data
+  obs_data <- extract_data(colData, "obs/colData", sce)
+  var_data <- extract_data(rowData, "var/rowData", sce)
+  
+  # Process metadata and pairwise matrices
+  uns <- process_metadata_and_pairwise(sce, alt_exps, X)
 
-  timestamped_cat(sprintf("Processing assay '%s' for anndata.X...\n", 
-                          assayName))
-  if (!(assayName %in% names(assays(sce)))) {
-    timestamped_cat(
-      sprintf(
-        "Error: The specified assay '%s' is not available in the provided ",
-        "SingleCellExperiment object.",
-        assayName
-      ),
-      "Use -a or --assay to specify an available assay.\n"
-    )
-    timestamped_cat("Available assays are:", 
-                    paste(names(assays(sce)), collapse = ", "), "\n")
-    quit(status = 1, save = "no")
-  }
-  X <- Matrix::t(assay(sce, assayName))
-  timestamped_cat(sprintf("Using '%s' assay as the main data matrix.\n", 
-                          assayName))
-  
-  timestamped_cat(sprintf("Processing assays other than '%s'...\n", assayName))
-  all_assays <- assays(sce)
-  all_assays <- all_assays[!names(all_assays) %in% assayName]
-  all_assays <- lapply(all_assays, Matrix::t)
-  timestamped_cat("Assays processed.\n")
-
-  timestamped_cat("Processing dimensional reductions...\n")
-  available_reductions <- names(reducedDims(sce))
-  if (length(available_reductions) > 0) {
-    obsm <- lapply(available_reductions, function(rd_name) {
-      reducedDim(sce, rd_name)
-    })
-    names(obsm) <- paste("X", tolower(available_reductions), sep = "_")
-    timestamped_cat("Dimensional reductions processed.\n")
-  } else {
-    obsm <- list()
-    timestamped_cat("No dimensional reductions found.\n")
-  }
-  
-  timestamped_cat("Processing and filtering the obs/colData and var/rowData...\n")
-  
-  extract_data <- function(data_fun, data_type) {
-    internal_columns <- NULL
-    tryCatch({
-      internal_columns <- colnames(data_fun(sce, internal = TRUE))
-      data <- as.data.frame(data_fun(sce, internal = TRUE))
-      timestamped_cat(sprintf("Successfully extracted %s with internal=TRUE.\n", 
-                              data_type))
-      return(list(data = data, internal_columns = internal_columns))
-    }, error = function(e) {
-      timestamped_cat(sprintf("WARNING: Failed to extract %s with internal=TRUE.\n", 
-                              data_type))
-      tryCatch({
-        data <- as.data.frame(data_fun(sce))
-        timestamped_cat(sprintf("Successfully extracted %s without internal=TRUE.\n", 
-                                data_type))
-        missing_columns <- setdiff(internal_columns, colnames(data))
-        if (length(missing_columns) > 0) {
-          timestamped_cat("WARNING: The following columns are missing without ",
-                          "internal=TRUE and some meta information might be lost: ",
-                          paste(missing_columns, collapse = ", "), "\n")
-        }
-        return(list(data = data, internal_columns = internal_columns))
-      }, error = function(e) {
-        timestamped_cat(sprintf("ERROR: Failed to extract %s.\n", data_type))
-        stop(sprintf("Unable to extract %s from the SingleCellExperiment object.", 
-                     data_type), call. = FALSE)
-      })
-    })
-  }
-  
-  # Extract obs_data and var_data with careful error handling
-  obs_result <- extract_data(colData, "obs/colData")
-  obs_data <- obs_result$data
-  
-  var_result <- extract_data(rowData, "var/rowData")
-  var_data <- var_result$data
-  
-  reduction_prefixes <- paste0(tolower(available_reductions), "\\.")
-  reduction_columns <- grep("^reducedDims\\.", names(obs_data), value = TRUE)
-  if (length(reduction_columns) > 0) {
-    obs_data <- obs_data[, !(names(obs_data) %in% reduction_columns), 
-                         drop = FALSE]
-  }
-  timestamped_cat("obs/colData processed.\n")
-  
-  timestamped_cat("Gathering metadata and pairwise matrices...\n")
-  uns <- c(metadata(sce), int_metadata(sce))
-  obsp <- list()
-  varp <- list()
-  varm <- list()
-  n_obs <- nrow(X)
-  n_var <- ncol(X)
-  for (name in names(uns)) {
-    item <- uns[[name]]
-    if (is.matrix(item) && all(dim(item) == c(n_obs, n_obs))) {
-      obsp[[name]] <- item
-      uns[[name]] <- NULL # Remove from uns if added to obsp
-      timestamped_cat(sprintf("Transferred '%s' to pairwise observations (obsp).\n", 
-                              name))
-    } else if (is.matrix(item) && nrow(item) == n_obs) {
-      obsm[[name]] <- item
-      uns[[name]] <- NULL # Remove from uns if added to obsm
-      timestamped_cat(sprintf("Transferred '%s' to observation matrices (obsm).\n", 
-                              name))
-    }
-    if (is.matrix(item) && all(dim(item) == c(n_var, n_var))) {
-      varp[[name]] <- item
-      uns[[name]] <- NULL # Remove from uns if added to obsp
-      timestamped_cat(sprintf("Transferred '%s' to pairwise variables (varp).\n", 
-                              name))
-    } else if (is.matrix(item) && nrow(item) == n_var) {
-      varm[[name]] <- item
-      uns[[name]] <- NULL # Remove from uns if added to varm
-      timestamped_cat(sprintf("Transferred '%s' to variable matrices (varm).\n", 
-                              name))
-    }
-  }
-  if (length(alt_exps_data) > 0) {
-    uns[["altExperiments"]] <- alt_exps_data
-  }
-  timestamped_cat("Metadata and pairwise data organized.\n")
-  
-  timestamped_cat("Making AnnData object...\n")
+  # Create AnnData object
   ad <- AnnData(
     X = X,
-    layers = all_assays,
-    obs = obs_data,
-    var = var_data,
+    layers = layers,
+    obs = obs_data$data,
+    var = var_data$data,
     obsm = obsm,
-    varm = varm,
-    obsp = obsp,
-    varp = varp,
-    uns = uns
+    varm = uns$varm,
+    obsp = uns$obsp,
+    varp = uns$varp,
+    uns = uns$uns
   )
 
   timestamped_cat("Summary of the AnnData object:\n\n")
@@ -250,7 +96,10 @@ convert_to_anndata <- function(sce, assayName = "counts", useAltExp = TRUE) {
 #' @import SingleCellExperiment
 #' @export
 convert_seurat_to_sce <- function(data) {
-  if ("seurat" %in% tolower(class(data))) {
+  object_class <- class(data)
+  timestamped_cat("Input object class:", paste(object_class, collapse = ", "), "\n")
+
+  if ("seurat" %in% tolower(object_class)) {
     timestamped_cat("Summary of input Seurat object:\n\n")
     suppressPackageStartupMessages(print(data))
     cat("\n")
