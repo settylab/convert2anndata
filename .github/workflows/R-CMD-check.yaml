@@ -29,6 +29,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install anndata
 
+      - name: Install Bioconductor packages
+        run: |
+          if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+          BiocManager::install(c("SingleCellExperiment", "SummarizedExperiment", "S4Vectors"))
+        shell: Rscript {0}
+
       - name: Install R package dependencies
         run: |
           install.packages('remotes')
@@ -43,10 +49,10 @@ jobs:
       - name: Check package
         run: |
           R CMD check --no-manual --as-cran .
-        shell: Rscript {0}
 
       - name: Test coverage
         run: |
-          Rscript -e 'covr::codecov()'
+          covr::codecov()
+        shell: Rscript {0}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
