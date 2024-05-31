@@ -13,6 +13,12 @@ install.packages("remotes")
 Then, install `convert2anndata` from GitHub:
 
 ```r
+remotes::install_github("settylab/convert2anndata")
+```
+
+Alternatively, install from GitHub athenticating through ssh:
+
+```r
 remotes::install_git("git@github.com:settylab/convert2anndata.git")
 ```
 
