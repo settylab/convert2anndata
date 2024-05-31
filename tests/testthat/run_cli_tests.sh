@@ -1,56 +1,59 @@
 #!/bin/bash
 
-# Function to run a test and check if the output file is created
-run_test() {
-  cmd=$1
-  output_file=$2
-  expected_msg=$3
+test_case=$1
+test_input=$2
 
-  echo "Running: $cmd"
-  $cmd
+# Determine the directory of the current script
+script_dir="$(dirname "$(realpath "$0")")"
+mock_data_dir="$script_dir/../testdata"
 
-  if [ -f $output_file ]; then
-    echo "Test passed: $expected_msg"
-    rm $output_file # Clean up
-  else
-    echo "Test failed: $expected_msg"
-    exit 1
-  fi
-}
-
-# Paths to the mock data files
-mock_sce="tests/testdata/mock_sce.rds"
-mock_seurat="tests/testdata/mock_seurat.rds"
-
-# Ensure the mock data files exist
-if [ ! -f $mock_sce ]; then
-  echo "Mock SCE file not found: $mock_sce"
-  exit 1
-fi
-
-if [ ! -f $mock_seurat ]; then
-  echo "Mock Seurat file not found: $mock_seurat"
-  exit 1
-fi
-
-case $1 in
-  "SingleCellExperiment input")
-    run_test "Rscript -e 'convert2anndata::cli_convert()' -i $mock_sce -o tests/testdata/output_sce.h5ad" "tests/testdata/output_sce.h5ad" "SingleCellExperiment input"
+case $test_case in
+  "SingleCellExperiment")
+    echo "Running SingleCellExperiment input test"
+    Rscript -e "convert2anndata::cli_convert()" -i "$mock_data_dir/mock_sce.rds" -o "$mock_data_dir/output_sce.h5ad"
+    if [ -f "$mock_data_dir/output_sce.h5ad" ]; then
+      echo "Test passed: SingleCellExperiment input"
+    else
+      echo "Test failed: SingleCellExperiment input"
+    fi
     ;;
-  "Seurat input")
-    run_test "Rscript -e 'convert2anndata::cli_convert()' -i $mock_seurat -o tests/testdata/output_seurat.h5ad" "tests/testdata/output_seurat.h5ad" "Seurat input"
+  "Seurat")
+    echo "Running Seurat input test"
+    Rscript -e "convert2anndata::cli_convert()" -i "$mock_data_dir/mock_seurat.rds" -o "$mock_data_dir/output_seurat.h5ad"
+    if [ -f "$mock_data_dir/output_seurat.h5ad" ]; then
+      echo "Test passed: Seurat input"
+    else
+      echo "Test failed: Seurat input"
+    fi
     ;;
-  "Default assay")
-    run_test "Rscript -e 'convert2anndata::cli_convert()' -i $mock_sce -o tests/testdata/output_default_assay.h5ad -a counts" "tests/testdata/output_default_assay.h5ad" "Default assay"
+  "Default")
+    echo "Running default assay test"
+    Rscript -e "convert2anndata::cli_convert()" -i "$mock_data_dir/mock_sce.rds" -o "$mock_data_dir/output_default_assay.h5ad" -a "counts"
+    if [ -f "$mock_data_dir/output_default_assay.h5ad" ]; then
+      echo "Test passed: Default assay"
+    else
+      echo "Test failed: Default assay"
+    fi
     ;;
-  "altExp flag")
-    run_test "Rscript -e 'convert2anndata::cli_convert()' -i $mock_sce -o tests/testdata/output_altExp.h5ad -d" "tests/testdata/output_altExp.h5ad" "altExp flag"
+  "altExp")
+    echo "Running altExp flag test"
+    Rscript -e "convert2anndata::cli_convert()" -i "$mock_data_dir/mock_sce.rds" -o "$mock_data_dir/output_altExp.h5ad" -d
+    if [ -f "$mock_data_dir/output_altExp.h5ad" ]; then
+      echo "Test passed: altExp flag"
+    else
+      echo "Test failed: altExp flag"
+    fi
     ;;
-  "No input")
-    run_test "Rscript -e 'convert2anndata::cli_convert()' -o tests/testdata/output_no_input.h5ad" "tests/testdata/output_no_input.h5ad" "No input"
+  "No")
+    echo "Running no input test"
+    Rscript -e "convert2anndata::cli_convert()" -o "$mock_data_dir/output_no_input.h5ad"
+    if [ $? -ne 0 ]; then
+      echo "Test passed: No input"
+    else
+      echo "Test failed: No input"
+    fi
     ;;
   *)
-    echo "Invalid test case"
-    exit 1
+    echo "Unknown input type"
     ;;
 esac

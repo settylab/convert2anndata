@@ -55,3 +55,6 @@ packrat/src/
 # Python virtual environments
 venv/
 __pycache__/
+
+# h5ad outputs from testing
+*.h5ad
