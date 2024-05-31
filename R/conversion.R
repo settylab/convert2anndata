@@ -1,3 +1,15 @@
+#' Print Messages with Timestamp
+#'
+#' This function prints messages with a timestamp.
+#'
+#' @param ... The messages to print.
+#' @return None. The function prints the messages to the console.
+#' @examples
+#' timestamped_cat("This is a message.")
+timestamped_cat <- function(...) {
+  cat(format(Sys.time(), "[%Y-%m-%d %H:%M:%S]"), ...)
+}
+
 #' Convert SingleCellExperiment to AnnData
 #'
 #' This function converts a SingleCellExperiment (SCE) object to an AnnData object.
@@ -20,7 +32,20 @@
 #' sce <- SingleCellExperiment::SingleCellExperiment(list(counts = matrix(1:4, ncol = 2)))
 #' ad <- convert_to_anndata(sce)
 #' }
+#' @import SingleCellExperiment
+#' @import SummarizedExperiment
+#' @import S4Vectors
+#' @import anndata
+#' @export
 convert_to_anndata <- function(sce, assay_name = "counts", useAltExp = TRUE) {
+
+  # Ensure SingleCellExperiment functions are loaded
+  SingleCellExperiment::altExpNames
+  SingleCellExperiment::altExp
+  SingleCellExperiment::removeAltExps
+  SummarizedExperiment::assay
+  S4Vectors::metadata
+  anndata::AnnData
 
   # Print a summary of the input SCE object
   timestamped_cat("Summary of SingleCellExperiment object:\n\n")
@@ -75,14 +100,14 @@ convert_to_anndata <- function(sce, assay_name = "counts", useAltExp = TRUE) {
                     paste(names(assays(sce)), collapse = ", "), "\n")
     quit(status = 1, save = "no")
   }
-  X <- t(assay(sce, assay_name))
+  X <- Matrix::t(assay(sce, assay_name))
   timestamped_cat(sprintf("Using '%s' assay as the main data matrix.\n", 
                           assay_name))
   
   timestamped_cat(sprintf("Processing assays other than '%s'...\n", assay_name))
   all_assays <- assays(sce)
   all_assays <- all_assays[!names(all_assays) %in% assay_name]
-  all_assays <- lapply(all_assays, t)
+  all_assays <- lapply(all_assays, Matrix::t)
   timestamped_cat("Assays processed.\n")
 
   timestamped_cat("Processing dimensional reductions...\n")
@@ -220,8 +245,10 @@ convert_to_anndata <- function(sce, assay_name = "counts", useAltExp = TRUE) {
 #' library(Seurat)
 #' library(SingleCellExperiment)
 #' seurat_obj <- CreateSeuratObject(counts = matrix(1:4, ncol = 2))
-#' sce <- convert_to_sce(seurat_obj)
+#' sce <- convert_seurat_to_sce(seurat_obj)
 #' }
+#' @import SingleCellExperiment
+#' @export
 convert_seurat_to_sce <- function(data) {
   if ("seurat" %in% tolower(class(data))) {
     timestamped_cat("Summary of input Seurat object:\n\n")
@@ -250,4 +277,84 @@ convert_seurat_to_sce <- function(data) {
     })
   }
   return(sce)
+}
+
+#' Command Line Interface for convert2anndata
+#'
+#' This function serves as a command line interface for the convert2anndata package.
+#' It parses command line arguments and calls the appropriate functions to convert
+#' a SingleCellExperiment or Seurat object to an AnnData object.
+#'
+#' @import optparse
+#' @import anndata
+#' @export
+cli_convert <- function() {
+  anndata::write_h5ad
+
+  # Description and help
+  description <- paste(
+    "This script converts a potentially old Seurat object or a SingleCellExperiment",
+    "stored in an RDS file into an AnnData object stored as an H5AD file.",
+    "The user can specify input and output file paths, with an option to change",
+    "the output filename from .rds to .h5ad if no output is specified."
+  )
+
+  # Set up command-line options
+  option_list <- list(
+    make_option(c("-i", "--input"),
+      type = "character", default = NULL,
+      help = "Path to the input RDS file containing the SingleCellExperiment object. This option is required.",
+      metavar = "file"
+    ),
+    make_option(c("-o", "--output"),
+      type = "character", default = NULL,
+      help = paste(
+        "Path to the output H5AD file. If not specified,",
+        "the output path is derived by replacing the .rds",
+        "extension of the input path with .h5ad."
+      ),
+      metavar = "file"
+    ),
+    make_option(c("-a", "--assay"),
+      type = "character", default = "counts",
+      help = "The assay to use as the main matrix (anndata.X). Defaults to 'counts'.",
+      metavar = "assay_name"
+    ),
+    make_option(c("-d", "--disable-recursive-altExp"),
+      action = "store_true", default = FALSE,
+      help = "Disable recursive recovery of altExperiments and discard them instead.",
+      metavar = "boolean"
+    )
+  )
+
+  # Parse command-line arguments
+  opt_parser <- OptionParser(option_list = option_list, description = description)
+  opt <- parse_args(opt_parser)
+
+  # Check if input file is provided
+  if (is.null(opt$input)) {
+    stop("No input file provided. Use --input to specify the RDS file.", 
+         call. = FALSE)
+  }
+
+  # Set output filename
+  if (is.null(opt$output)) {
+    opt$output <- sub("\\.[rR][dD][sS]$", ".h5ad", opt$input, ignore.case = TRUE)
+  }
+
+  # Load data
+  timestamped_cat("Loading data from:", opt$input, "\n")
+  data <- readRDS(opt$input)
+
+  # Convert to SingleCellExperiment if necessary
+  sce <- convert_seurat_to_sce(data)
+  timestamped_cat("Data loaded and converted successfully if needed.\n")
+
+  # Convert SCE to AnnData
+  ad <- convert_to_anndata(sce, opt$assay, useAltExp = !isTRUE(opt$`disable-recursive-altExp`))
+
+  # Save AnnData object
+  timestamped_cat("Saving the AnnData object to:", opt$output, "\n")
+  write_h5ad(ad, opt$output)
+  timestamped_cat("Conversion complete:", opt$output, "\n")
 }

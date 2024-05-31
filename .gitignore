@@ -1,0 +1,57 @@
+# History files
+.Rhistory
+.Rapp.history
+
+# Session Data files
+.RData
+
+# User-specific files
+.Ruserdata
+
+# Example code in documentation
+*-Ex.R
+
+# Output files from R CMD build
+/*.tar.gz
+
+# Output files from R CMD check
+/*.Rcheck/
+
+# RStudio files
+.Rproj.user/
+.Rproj.user/*
+.Rproj.user/**/*
+.Rproj.user/shared/notebooks/
+.Rproj.user/shared/notebooks/**/*
+*.Rproj
+
+# R package-specific files
+.Rbuildignore
+.RData
+.DS_Store
+
+# Ignored by default but should not be in version control
+.Rhistory
+.Rapp.history
+.Rprofile
+
+# RStudio configuration files
+*.Rproj
+.Rproj.user/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Temporary files created by R
+*.o
+*.so
+*.dll
+
+# Packrat library and sources
+packrat/lib/
+packrat/src/
+
+# Python virtual environments
+venv/
+__pycache__/
