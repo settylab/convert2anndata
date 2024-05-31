@@ -1,44 +1,38 @@
 library(testthat)
-library(optparse)
-library(reticulate)
 library(withr)
-library(convert2anndata)
 
-# Ensure anndata is loaded
-anndata <- reticulate::import("anndata", convert = FALSE)
+# Define the shell script path
+shell_script <- "tests/testthat/run_cli_tests.sh"
 
-test_that("cli_convert works with SingleCellExperiment input", {
-  with_options(list(args = c("-i", "tests/testdata/mock_sce.rds", "-o", "tests/testdata/output_sce.h5ad")), {
-    expect_message(cli_convert(), "Conversion complete")
-    expect_true(file.exists("tests/testdata/output_sce.h5ad"))
-  })
-})
-
-if (requireNamespace("Seurat", quietly = TRUE)) {
-  test_that("cli_convert works with Seurat input", {
-    with_options(list(args = c("-i", "tests/testdata/mock_seurat.rds", "-o", "tests/testdata/output_seurat.h5ad")), {
-      expect_message(cli_convert(), "Conversion complete")
-      expect_true(file.exists("tests/testdata/output_seurat.h5ad"))
-    })
-  })
+# Helper function to run shell commands
+run_shell_command <- function(cmd) {
+  result <- system(cmd, intern = TRUE)
+  return(result)
 }
 
+test_that("cli_convert works with SingleCellExperiment input", {
+  result <- run_shell_command(paste("bash", shell_script, "SingleCellExperiment input"))
+  expect_true(any(grepl("Test passed: SingleCellExperiment input", result)))
+})
+
+test_that("cli_convert works with Seurat input", {
+  if (requireNamespace("Seurat", quietly = TRUE)) {
+    result <- run_shell_command(paste("bash", shell_script, "Seurat input"))
+    expect_true(any(grepl("Test passed: Seurat input", result)))
+  }
+})
+
 test_that("cli_convert uses default assay", {
-  with_options(list(args = c("-i", "tests/testdata/mock_sce.rds", "-o", "tests/testdata/output_default_assay.h5ad", "-a", "counts")), {
-    expect_message(cli_convert(), "Conversion complete")
-    expect_true(file.exists("tests/testdata/output_default_assay.h5ad"))
-  })
+  result <- run_shell_command(paste("bash", shell_script, "Default assay"))
+  expect_true(any(grepl("Test passed: Default assay", result)))
 })
 
 test_that("cli_convert handles altExp flag", {
-  with_options(list(args = c("-i", "tests/testdata/mock_sce.rds", "-o", "tests/testdata/output_altExp.h5ad", "-d")), {
-    expect_message(cli_convert(), "Conversion complete")
-    expect_true(file.exists("tests/testdata/output_altExp.h5ad"))
-  })
+  result <- run_shell_command(paste("bash", shell_script, "altExp flag"))
+  expect_true(any(grepl("Test passed: altExp flag", result)))
 })
 
 test_that("cli_convert stops without input", {
-  with_options(list(args = c("-o", "tests/testdata/output_no_input.h5ad")), {
-    expect_error(cli_convert(), "No input file provided")
-  })
+  result <- run_shell_command(paste("bash", shell_script, "No input"))
+  expect_true(any(grepl("Test passed: No input", result)))
 })
