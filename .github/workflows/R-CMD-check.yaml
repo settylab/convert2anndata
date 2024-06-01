@@ -54,6 +54,7 @@ jobs:
       - name: Install R package dependencies
         run: |
           install.packages('remotes')
+          install.packages('devtools')
           remotes::install_deps(dependencies = TRUE)
         shell: Rscript {0}
 
@@ -64,7 +65,6 @@ jobs:
 
       - name: Test Debugging
         run: |
-          install.packages('devtools')
           devtools::test()
         shell: Rscript {0}
 
