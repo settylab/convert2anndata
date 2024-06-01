@@ -78,7 +78,6 @@ jobs:
           library(covr)
           coverage <- package_coverage()
           print(coverage)
-          report(coverage)
           covr::codecov(token = Sys.getenv("CODECOV_TOKEN"))
         shell: Rscript {0}
         env:
