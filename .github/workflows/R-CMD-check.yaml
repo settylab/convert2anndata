@@ -75,7 +75,11 @@ jobs:
 
       - name: Test coverage
         run: |
-          covr::codecov()
+          library(covr)
+          coverage <- package_coverage()
+          print(coverage)
+          report(coverage)
+          covr::codecov(token = Sys.getenv("CODECOV_TOKEN"))
         shell: Rscript {0}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
