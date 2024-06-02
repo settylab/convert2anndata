@@ -66,6 +66,16 @@ renv::snapshot(type="all")
 
 If you want to convert Seurat objects, you will also need to install the Seurat package. Follow the installation instructions on the [Seurat website](https://satijalab.org/seurat/articles/install.html).
 
+### Make an alias
+
+Consider making an alias for the command line tool, e.g., with
+
+```bash
+alias c2a='Rscript -e "convert2anndata::cli_convert()"'
+echo alias c2a='Rscript -e "convert2anndata::cli_convert()"' >> ~/.bashrc
+```
+
+Now you can use the command line toole, explained under `Command Line Usage` below, just by typing, e.g., `c2a -h`.
 
 ## Usage
 
