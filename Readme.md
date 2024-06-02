@@ -83,15 +83,17 @@ Rscript -e "convert2anndata::cli_convert()" -i /path/to/input_file.rds -o /path/
 - `-o`, `--output`: Path to the output H5AD file. If not specified, the output path is derived by replacing the `.rds` extension of the input path with `.h5ad`.
 - `-a`, `--assay`: The assay to use as the main matrix (`anndata.X`). Defaults to 'counts'.
 - `-d`, `--disable-recursive-altExp`: Disable recursive recovery of `altExperiments` and discard them instead.
+- `-h`, `--help`: Show a help massage and exit.
 
 ### R Usage
 
 You can also use the `convert2anndata` package directly in R. Below are examples of how to convert `SingleCellExperiment` or `Seurat` objects to `AnnData` format within an R session.
 
-#### Example: Converting a Seurat Object
+#### Example
 
 ```r
 library(convert2anndata)
+library(anndata)
 
 # Load a Seurat object
 seurat_obj <- readRDS("/path/to/input_file.rds")
@@ -106,20 +108,7 @@ ad <- convert_to_anndata(sce, assayName = "counts", useAltExp = TRUE)
 write_h5ad(ad, "/path/to/output_file.h5ad")
 ```
 
-#### Example: Converting a SingleCellExperiment Object
-
-```r
-library(convert2anndata)
-
-# Load a SingleCellExperiment object
-sce <- readRDS("/path/to/input_file.rds")
-
-# Convert to AnnData
-ad <- convert_to_anndata(sce, assayName = "counts", useAltExp = TRUE)
-
-# Save the AnnData object
-write_h5ad(ad, "/path/to/output_file.h5ad")
-```
+You can retrive the documentation through `?convert_to_anndata` for any of functions.
 
 ## Function Reference
 
