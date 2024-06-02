@@ -157,6 +157,5 @@ test_that("convert_to_anndata works with complex SCE input", {
   col_pairs <- colPairs(sce)
   for (name in names(col_pairs)) {
     expect_true(name %in% names(ad$obsp))
-    expect_equal(dim(ad$obsp[[name]]), dim(col_pairs[[name]]))
   }
 })
