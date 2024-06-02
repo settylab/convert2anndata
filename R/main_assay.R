@@ -9,8 +9,10 @@
 #' @importFrom Matrix t
 #' @export
 process_main_assay <- function(sce, assayName) {
-  timestamped_cat(sprintf("Processing assay '%s' for anndata.X...\n", 
-                          assayName))
+  timestamped_cat(sprintf(
+    "Processing assay '%s' for anndata.X...\n",
+    assayName
+  ))
   if (!(assayName %in% names(assays(sce)))) {
     timestamped_cat(
       sprintf(
@@ -20,12 +22,16 @@ process_main_assay <- function(sce, assayName) {
       ),
       "Use -a or --assay to specify an available assay.\n"
     )
-    timestamped_cat("Available assays are:", 
-                    paste(names(assays(sce)), collapse = ", "), "\n")
+    timestamped_cat(
+      "Available assays are:",
+      paste(names(assays(sce)), collapse = ", "), "\n"
+    )
     quit(status = 1, save = "no")
   }
   X <- Matrix::t(assay(sce, assayName))
-  timestamped_cat(sprintf("Using '%s' assay as the main data matrix.\n", 
-                          assayName))
+  timestamped_cat(sprintf(
+    "Using '%s' assay as the main data matrix.\n",
+    assayName
+  ))
   return(X)
 }

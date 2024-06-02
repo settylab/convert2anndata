@@ -29,9 +29,12 @@ convert_seurat_to_sce <- function(data) {
     cat("\n")
 
     # Use tryCatch to safely check for Seurat v2 or v3 indicators
-    raw_data <- tryCatch({
-      if (!is.null(data@raw.data)) data@raw.data else NULL
-    }, error = function(e) NULL)
+    raw_data <- tryCatch(
+      {
+        if (!is.null(data@raw.data)) data@raw.data else NULL
+      },
+      error = function(e) NULL
+    )
 
     if (!is.null(raw_data)) {
       timestamped_cat("Old Seurat v2 object detected, attempting to update...\n")
@@ -39,12 +42,15 @@ convert_seurat_to_sce <- function(data) {
     }
 
     # Convert to SingleCellExperiment
-    sce <- tryCatch({
-      Seurat::as.SingleCellExperiment(data)
-    }, error = function(e) {
-      # Handle the case where layers might be empty
-      Seurat::as.SingleCellExperiment(data, assay = NULL)
-    })
+    sce <- tryCatch(
+      {
+        Seurat::as.SingleCellExperiment(data)
+      },
+      error = function(e) {
+        # Handle the case where layers might be empty
+        Seurat::as.SingleCellExperiment(data, assay = NULL)
+      }
+    )
   } else if ("SingleCellExperiment" %in% object_class) {
     sce <- data
   } else {

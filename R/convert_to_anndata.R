@@ -23,26 +23,25 @@
 #' @importFrom anndata AnnData
 #' @export
 convert_to_anndata <- function(sce, assayName = "counts", useAltExp = TRUE) {
-
   # Print a summary of the input SCE object
   timestamped_cat("Summary of SingleCellExperiment object:\n\n")
   print(sce)
   cat("\n")
-  
+
   # Process altExperiments
   alt_exps_data <- process_alt_experiments(sce, assayName, useAltExp)
   sce <- alt_exps_data$sce
   alt_exps <- alt_exps_data$alt_exps
-  
+
   # Process the main assay
   X <- process_main_assay(sce, assayName)
-  
+
   # Process other assays
   layers <- process_other_assays(sce, assayName)
-  
+
   # Process dimensional reductions
   obsm <- process_dimensional_reductions(sce)
-  
+
   # Process obs and var data
   obs_data <- extract_data(colData, "obs/colData", sce)
   var_data <- extract_data(rowData, "var/rowData", sce)
@@ -54,12 +53,12 @@ convert_to_anndata <- function(sce, assayName = "counts", useAltExp = TRUE) {
   if (length(reduction_columns) > 0) {
     obs_data$data <- obs_data$data[, !(names(obs_data$data) %in% reduction_columns), drop = FALSE]
   }
-  
+
   # Ensure obs and var are correctly provided
   if (nrow(obs_data$data) != nrow(X) || ncol(obs_data$data) == 0) {
     obs_data$data <- NULL
   }
-  
+
   if (nrow(var_data$data) != ncol(X) || ncol(var_data$data) == 0) {
     var_data$data <- NULL
   }

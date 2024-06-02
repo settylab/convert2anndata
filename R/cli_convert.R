@@ -53,8 +53,9 @@ cli_convert <- function() {
 
   # Check if input file is provided
   if (is.null(opt$input)) {
-    stop("No input file provided. Use --input to specify the RDS file.", 
-         call. = FALSE)
+    stop("No input file provided. Use --input to specify the RDS file.",
+      call. = FALSE
+    )
   }
 
   # Set output filename
