@@ -87,6 +87,12 @@ You can use the `convert2anndata` package from the command line to convert `Sing
 Rscript -e "convert2anndata::cli_convert()" -i /path/to/input_file.rds -o /path/to/output_file.h5ad
 ```
 
+If you set up an alias, as suggested in the `Installation` section, then you can also conviniently run
+
+```sh
+c2a -i /path/to/input_file.rds -o /path/to/output_file.h5ad
+```
+
 #### Command Line Options
 
 - `-i`, `--input`: Path to the input RDS file containing the `SingleCellExperiment` or `Seurat` object. This option is required.
