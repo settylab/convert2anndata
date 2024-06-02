@@ -21,5 +21,6 @@ Imports:
     methods
 Suggests:
     testthat (>= 3.0.0),
-    covr
+    covr,
+    BiocNeighbors
 biocViews: SingleCellData, DataImport, Transcriptomics, Sequencing, RNASeq

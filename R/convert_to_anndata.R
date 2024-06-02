@@ -63,6 +63,23 @@ convert_to_anndata <- function(sce, assayName = "counts", useAltExp = TRUE) {
     var_data$data <- NULL
   }
 
+  # Retrieve colPairs and rowPairs data
+  col_pairs_data <- extract_pairs(colPairs, sce)
+  row_pairs_data <- extract_pairs(rowPairs, sce)
+
+  # Report extracted pairwise data
+  if (length(col_pairs_data) > 0) {
+    timestamped_cat("Extracted colPairs data:\n", paste(names(col_pairs_data), collapse = ", "), "\n")
+  } else {
+    timestamped_cat("No colPairs data extracted.\n")
+  }
+  
+  if (length(row_pairs_data) > 0) {
+    timestamped_cat("Extracted rowPairs data:\n", paste(names(row_pairs_data), collapse = ", "), "\n")
+  } else {
+    timestamped_cat("No rowPairs data extracted.\n")
+  }
+
   # Process metadata and pairwise matrices
   uns_data <- process_metadata_and_pairwise(sce, alt_exps, X)
 
@@ -72,8 +89,8 @@ convert_to_anndata <- function(sce, assayName = "counts", useAltExp = TRUE) {
     layers = layers,
     obsm = obsm,
     varm = uns_data$varm,
-    obsp = uns_data$obsp,
-    varp = uns_data$varp,
+    obsp = c(uns_data$obsp, col_pairs_data),
+    varp = c(uns_data$varp, row_pairs_data),
     uns = uns_data$uns
   )
 

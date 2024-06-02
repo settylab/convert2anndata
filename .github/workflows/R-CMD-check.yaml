@@ -48,7 +48,7 @@ jobs:
       - name: Install Bioconductor packages
         run: |
           if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
-          BiocManager::install(c("SingleCellExperiment", "SummarizedExperiment", "S4Vectors"))
+          BiocManager::install(c("SingleCellExperiment", "SummarizedExperiment", "S4Vectors", "BiocNeighbors"))
         shell: Rscript {0}
 
       - name: Install R package dependencies
