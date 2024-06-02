@@ -2,7 +2,7 @@
 
 [![Codecov test coverage](https://codecov.io/gh/settylab/convert2anndata/branch/main/graph/badge.svg)](https://codecov.io/gh/settylab/convert2anndata)
 
-`convert2anndata` is an R package that provides functions to convert `SingleCellExperiment` and `Seurat` objects to `AnnData` format. It handles assays, dimensional reductions, metadata, and alternative experiments, ensuring comprehensive conversion.
+`convert2anndata` is an R package that provides functions to convert `SingleCellExperiment` and `Seurat` objects to `AnnData` format. It handles assays, dimensional reductions, metadata, pairing data such as cell-to-cell distances, and alternative experiments, ensuring comprehensive conversion.
 
 ## Installation
 
