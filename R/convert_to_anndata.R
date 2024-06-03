@@ -73,7 +73,7 @@ convert_to_anndata <- function(sce, assayName = "counts", useAltExp = TRUE) {
   } else {
     timestamped_cat("No colPairs data extracted.\n")
   }
-  
+
   if (length(row_pairs_data) > 0) {
     timestamped_cat("Extracted rowPairs data:\n", paste(names(row_pairs_data), collapse = ", "), "\n")
   } else {
