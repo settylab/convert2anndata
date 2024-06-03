@@ -14,20 +14,20 @@ create_mock_sce <- function() {
   n_genes <- 100
 
   # Create a main assay matrix
-  counts <- matrix(runif(n_cells*n_genes), nrow = n_genes, ncol = n_cells)
-  
+  counts <- matrix(runif(n_cells * n_genes), nrow = n_genes, ncol = n_cells)
+
   # Create an alternative experiment with matching column numbers
-  alt_counts <- matrix(runif(5*n_cells), nrow = 5, ncol = n_cells)
+  alt_counts <- matrix(runif(5 * n_cells), nrow = 5, ncol = n_cells)
   alt1 <- SingleCellExperiment(assays = list(counts = alt_counts))
-  
+
   # Create reduced dimensions
-  pca <- matrix(runif(3*n_cells), nrow = n_cells, ncol = 3)
+  pca <- matrix(runif(3 * n_cells), nrow = n_cells, ncol = 3)
   reducedDims <- list(PCA = pca, UMAP = pca, other_rep = pca)
-  
+
   # Create colData and rowData
-  colData <- DataFrame(cell_type = rep(c("A", "B"), n_cells/2))
-  rowData <- DataFrame(gene_type = rep(c("gene1", "gene2"), n_genes/2))
-  
+  colData <- DataFrame(cell_type = rep(c("A", "B"), n_cells / 2))
+  rowData <- DataFrame(gene_type = rep(c("gene1", "gene2"), n_genes / 2))
+
   # Create the main SCE object
   sce <- SingleCellExperiment(
     assays = list(counts = counts, logcounts = counts),
@@ -36,54 +36,60 @@ create_mock_sce <- function() {
     reducedDims = reducedDims,
     altExps = list(alt1 = alt1)
   )
-  
+
   # Compute k-nearest neighbors and add to the SCE object
   knn <- findKNN(pca, k = 10)
   colPairs(sce) <- knn
-  
+
   # Add additional metadata
   metadata(sce) <- list(experiment_info = "Mock experiment")
-  
+
   return(sce)
 }
 
 test_that("convert_to_anndata works correctly", {
   sce <- SingleCellExperiment::SingleCellExperiment(list(counts = matrix(1:4, ncol = 2)))
-  tryCatch({
-    ad <- convert_to_anndata(sce)
-    expect_true(R6::is.R6(ad)) # Ensure it is an R6 object
-    expect_equal(nrow(ad$X), 2)
-    expect_equal(ncol(ad$X), 2)
-    if (!is.null(ad$obs)) {
-      expect_equal(nrow(ad$obs), 2)
+  tryCatch(
+    {
+      ad <- convert_to_anndata(sce)
+      expect_true(R6::is.R6(ad)) # Ensure it is an R6 object
+      expect_equal(nrow(ad$X), 2)
+      expect_equal(ncol(ad$X), 2)
+      if (!is.null(ad$obs)) {
+        expect_equal(nrow(ad$obs), 2)
+      }
+      if (!is.null(ad$var)) {
+        expect_equal(nrow(ad$var), 2)
+      }
+    },
+    error = function(e) {
+      print(reticulate::py_last_error())
+      stop(e)
     }
-    if (!is.null(ad$var)) {
-      expect_equal(nrow(ad$var), 2)
-    }
-  }, error = function(e) {
-    print(reticulate::py_last_error())
-    stop(e)
-  })
+  )
 })
 
 test_that("convert_to_anndata handles altExps correctly", {
   sce <- SingleCellExperiment::SingleCellExperiment(list(counts = matrix(1:4, ncol = 2)))
   alt_sce <- SingleCellExperiment::SingleCellExperiment(list(counts = matrix(5:8, ncol = 2)))
   altExp(sce, "alt1") <- alt_sce
-  tryCatch({
-    ad <- convert_to_anndata(sce, useAltExp = TRUE)
-    expect_true("altExperiments" %in% names(ad$uns))
-    expect_true(R6::is.R6(ad$uns$altExperiments$alt1)) # Ensure it is an R6 object
-    if (!is.null(ad$obs)) {
-      expect_equal(nrow(ad$obs), 2)
+  tryCatch(
+    {
+      ad <- convert_to_anndata(sce, useAltExp = TRUE)
+      expect_true("altExperiments" %in% names(ad$uns))
+      expect_true(R6::is.R6(ad$uns$altExperiments$alt1)) # Ensure it is an R6 object
+      if (!is.null(ad$obs)) {
+        expect_equal(nrow(ad$obs), 2)
+      }
+      if (!is.null(ad$var)) {
+        expect_equal(nrow(ad$var), 2)
+      }
+    },
+    error = function(e) {
+      print(reticulate::py_last_error())
+      stop(e)
     }
-    if (!is.null(ad$var)) {
-      expect_equal(nrow(ad$var), 2)
-    }
-  }, error = function(e) {
-    print(reticulate::py_last_error())
-    stop(e)
-  })
+  )
 })
 
 test_that("convert_to_anndata works with Seurat objects", {
