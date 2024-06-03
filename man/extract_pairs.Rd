@@ -4,10 +4,12 @@
 \alias{extract_pairs}
 \title{Extract Pairwise Data from SingleCellExperiment}
 \usage{
-extract_pairs(pairs_function, sce)
+extract_pairs(pairs_function, pair_type, sce)
 }
 \arguments{
 \item{pairs_function}{A function to extract pairwise data (e.g., colPairs or rowPairs).}
+
+\item{pair_type}{A string indicating whether the data is colPairing or rowPairing.}
 
 \item{sce}{A SingleCellExperiment object from which to extract the pairwise data.}
 }

@@ -64,8 +64,8 @@ convert_to_anndata <- function(sce, assayName = "counts", useAltExp = TRUE) {
   }
 
   # Retrieve colPairs and rowPairs data
-  col_pairs_data <- extract_pairs(colPairs, sce)
-  row_pairs_data <- extract_pairs(rowPairs, sce)
+  col_pairs_data <- extract_pairs(colPairs, "Column Pairs", sce)
+  row_pairs_data <- extract_pairs(rowPairs, "Row Pairs", sce)
 
   # Report extracted pairwise data
   if (length(col_pairs_data) > 0) {

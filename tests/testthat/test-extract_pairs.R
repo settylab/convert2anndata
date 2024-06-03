@@ -59,7 +59,7 @@ test_that("extract_pairs works with various pairwise data scenarios", {
   sce <- create_mock_sce_with_pairs()
 
   # Extract pairs using the extract_pairs function
-  pairs_list <- extract_pairs(colPairs, sce)
+  pairs_list <- extract_pairs(colPairs, "Column Pairs", sce)
 
   # Check that the pairs_list contains the expected matrices
   expect_true("distance" %in% names(pairs_list))

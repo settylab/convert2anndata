@@ -4,31 +4,32 @@
 #' object and returns it as a list of sparse matrices.
 #'
 #' @param pairs_function A function to extract pairwise data (e.g., colPairs or rowPairs).
+#' @param pair_type A string indicating whether the data is colPairing or rowPairing.
 #' @param sce A SingleCellExperiment object from which to extract the pairwise data.
 #' @return A list of pairwise data as sparse matrices.
 #' @importFrom SingleCellExperiment colPairs rowPairs
 #' @importFrom Matrix sparseMatrix
 #' @importFrom methods is
 #' @export
-extract_pairs <- function(pairs_function, sce) {
+extract_pairs <- function(pairs_function, pair_type, sce) {
   pairs_list <- list()
   pairs <- pairs_function(sce)
 
   if (length(pairs) == 0) {
-    timestamped_cat("No pairwise data found.\n")
+    timestamped_cat(pair_type, ": No pairwise data found.\n")
     return(pairs_list)
   }
 
   if ("index" %in% names(pairs) && "distance" %in% names(pairs) &&
       is(pairs[["index"]], "SelfHits") && is(pairs[["distance"]], "SelfHits")) {
-    timestamped_cat("Detected index and distance pairwise data in SelfHit format.\n")
+    timestamped_cat(pair_type, ": Detected index and distance pairwise data in SelfHit format.\n")
     index_hits <- pairs[["index"]]
     distance_hits <- pairs[["distance"]]
 
-    if (all(queryHits(index_hits) == queryHits(distance_hits)) && all(subjectHits(index_hits) == subjectHits(distance_hits))) {
-      timestamped_cat(
-        "Index and distance 'from' and 'to' columns agree. Combining info to",
-        "create 'distance' and 'connectivity' sparse natrix.\n"
+    if (all(queryHits(index_hits) == queryHits(distance_hits)) &&
+        all(subjectHits(index_hits) == subjectHits(distance_hits))) {
+      timestamped_cat(pair_type, 
+        ": Index and distance 'from' and 'to' columns agree. Combining info to create 'distance' and 'connectivity' sparse matrix.\n"
       )
       pairs_list[["distance"]] <- sparseMatrix(
         i = queryHits(index_hits),
@@ -45,9 +46,8 @@ extract_pairs <- function(pairs_function, sce) {
       pairs[["index"]] <- NULL
       pairs[["distance"]] <- NULL
     } else {
-      timestamped_cat(
-        "WARNING: Index and distance 'from' and 'to' columns do not agree.",
-        "Using them individually and intereting 'to' column as cell index.\n"
+      timestamped_cat(pair_type,
+        ": WARNING: Index and distance 'from' and 'to' columns do not agree. Using them individually and interpreting 'to' column as cell index.\n"
       )
     }
   }
@@ -61,7 +61,7 @@ extract_pairs <- function(pairs_function, sce) {
           x = mcols(pairs[[name]])[[1]],
           dims = c(ncol(sce), ncol(sce))
         )
-        timestamped_cat("Created sparse matrix for", name, "paired data.\n")
+        timestamped_cat(pair_type, ": Created sparse matrix for ", name, " paired data.\n")
       } else if (length(mcols(pairs[[name]])) > 1) {
         for (mcol_name in colnames(mcols(pairs[[name]]))) {
           pairs_list[[paste0(name, "_", mcol_name)]] <- sparseMatrix(
@@ -70,7 +70,7 @@ extract_pairs <- function(pairs_function, sce) {
             x = mcols(pairs[[name]])[[mcol_name]],
             dims = c(ncol(sce), ncol(sce))
           )
-          timestamped_cat("Created sparse matrix for", name, "_", mcol_name, "paired data.\n")
+          timestamped_cat(pair_type, ": Created sparse matrix for ", name, "_", mcol_name, " paired data.\n")
         }
       } else {
         pairs_list[[name]] <- sparseMatrix(
@@ -79,14 +79,13 @@ extract_pairs <- function(pairs_function, sce) {
           x = rep(1, length(pairs[[name]])),
           dims = c(ncol(sce), ncol(sce))
         )
-        timestamped_cat("Created sparse matrix for", name, "paired data with default values.\n")
+        timestamped_cat(pair_type, ": Created sparse matrix for ", name, " paired data with default values.\n")
       }
     } else {
       pairs_list[[name]] <- as(pairs[[name]], "dgCMatrix")
-      timestamped_cat("Converted", name, "paired data to dgCMatrix.\n")
+      timestamped_cat(pair_type, ": Converted ", name, " paired data to dgCMatrix.\n")
     }
   }
-  
 
   return(pairs_list)
 }
