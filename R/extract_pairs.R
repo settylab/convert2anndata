@@ -35,12 +35,14 @@ extract_pairs <- function(pairs_function, pair_type, sce) {
         i = queryHits(index_hits),
         j = mcols(index_hits)[[1]],
         x = mcols(distance_hits)[[1]],
+        use.last.ij = TRUE,
         dims = c(ncol(sce), ncol(sce))
       )
       pairs_list[["connectivity"]] <- sparseMatrix(
         i = queryHits(index_hits),
         j = mcols(index_hits)[[1]],
-        x = rep(1, length(index_hits)),
+        x = 1,
+        use.last.ij = TRUE,
         dims = c(ncol(sce), ncol(sce))
       )
       pairs[["index"]] <- NULL
@@ -59,6 +61,7 @@ extract_pairs <- function(pairs_function, pair_type, sce) {
           i = queryHits(pairs[[name]]),
           j = subjectHits(pairs[[name]]),
           x = mcols(pairs[[name]])[[1]],
+          use.last.ij = TRUE,
           dims = c(ncol(sce), ncol(sce))
         )
         timestamped_cat(pair_type, ": Created sparse matrix for ", name, " paired data.\n")
@@ -68,6 +71,7 @@ extract_pairs <- function(pairs_function, pair_type, sce) {
             i = queryHits(pairs[[name]]),
             j = subjectHits(pairs[[name]]),
             x = mcols(pairs[[name]])[[mcol_name]],
+            use.last.ij = TRUE,
             dims = c(ncol(sce), ncol(sce))
           )
           timestamped_cat(pair_type, ": Created sparse matrix for ", name, "_", mcol_name, " paired data.\n")
@@ -77,6 +81,7 @@ extract_pairs <- function(pairs_function, pair_type, sce) {
           i = queryHits(pairs[[name]]),
           j = subjectHits(pairs[[name]]),
           x = rep(1, length(pairs[[name]])),
+          use.last.ij = TRUE,
           dims = c(ncol(sce), ncol(sce))
         )
         timestamped_cat(pair_type, ": Created sparse matrix for ", name, " paired data with default values.\n")

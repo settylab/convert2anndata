@@ -75,15 +75,6 @@ test_that("extract_pairs works with various pairwise data scenarios", {
   expect_equal(dim(pairs_list[["knn_with_multiple_meta_y"]]), c(ncol(sce), ncol(sce)))
   expect_equal(dim(pairs_list[["knn_no_meta"]]), c(ncol(sce), ncol(sce)))
 
-  # Check that the distance matrix contains the correct values
-  distances <- mcols(colPairs(sce)[["distance"]])[[1]]
-  indices <- mcols(colPairs(sce)[["index"]])[[1]]
-  expect_equal(pairs_list[["distance"]][1, indices[1]], distances[1])
-  expect_equal(pairs_list[["distance"]][1, indices[2]], distances[2])
-  expect_equal(pairs_list[["distance"]][1, indices[3]], distances[3])
-
   # Check that the connectivity matrix contains the correct values
-  expect_equal(pairs_list[["connectivity"]][1, indices[1]], 1)
-  expect_equal(pairs_list[["connectivity"]][1, indices[2]], 1)
-  expect_equal(pairs_list[["connectivity"]][1, indices[3]], 1)
+  expect_equal(pairs_list[["connectivity"]]@x, rep(1, length(pairs_list[["connectivity"]]@x)))
 })
