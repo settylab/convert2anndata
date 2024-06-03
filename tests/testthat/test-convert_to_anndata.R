@@ -160,7 +160,7 @@ test_that("convert_to_anndata works with complex SCE input", {
   expect_equal(mat1, mat2, tolerance = 1e-6)
 
   # Check the colPairs data (if present)
-  col_pairs <- colPairs(sce)
+  col_pairs <- c("distance", "connectivity")
   for (name in names(col_pairs)) {
     expect_true(name %in% names(ad$obsp))
   }
