@@ -72,7 +72,7 @@ Consider making an alias for the command line tool, e.g., with
 
 ```bash
 alias c2a='Rscript -e "convert2anndata::cli_convert()"'
-echo alias c2a='Rscript -e "convert2anndata::cli_convert()"' >> ~/.bashrc
+echo 'alias c2a="Rscript -e \"convert2anndata::cli_convert()\""' >> ~/.bashrc
 ```
 
 Now you can use the command line toole, explained under `Command Line Usage` below, just by typing, e.g., `c2a -h`.
