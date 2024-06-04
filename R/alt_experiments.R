@@ -33,8 +33,7 @@ process_alt_experiments <- function(sce, assayName, useAltExp) {
         if (!(assayName %in% names(assays(alt_sce)))) {
           alt_assayName <- names(assays(alt_sce))[1]
           timestamped_cat(sprintf(
-            "WARNING: The specified assay '%s' is not ",
-            "available in altExp '%s'. Using '%s' instead.\n",
+            "WARNING: The specified assay '%s' is not available in altExp '%s'. Using '%s' instead.\n",
             assayName, alt_exp, alt_assayName
           ))
         }
