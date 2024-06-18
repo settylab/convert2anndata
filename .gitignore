@@ -60,5 +60,4 @@ __pycache__/
 *.h5ad
 
 # generated website
-docs/
 docs

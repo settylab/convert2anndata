@@ -8,7 +8,7 @@ authors:
 
 home:
   title: "convert2anndata"
-  description: |
+  description: >
     An R package to convert SingeCellExperiment and Seurat objects into
     anndata as comprehensively as possible.
   path: README.md
