@@ -24,7 +24,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.8'  # Specify a version compatible with reticulate
+          python-version: '3.8'
 
       - name: Install system dependencies
         run: |
@@ -35,9 +35,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install anndata
-          pip install numpy  # Ensure numpy is available
+          pip install numpy
         env:
-          RETICULATE_PYTHON: /opt/hostedtoolcache/Python/3.8.10/x64/bin/python  # Path to the Python executable
+          RETICULATE_PYTHON: /opt/hostedtoolcache/Python/3.8.10/x64/bin/python
 
       - name: Verify Python installation
         run: |
@@ -78,7 +78,7 @@ jobs:
           library(covr)
           coverage <- package_coverage()
           print(coverage)
-          covr::codecov(token = Sys.getenv("CODECOV_TOKEN"))
+          covr::codecov(token = Sys.getenv("CODECOV_TOKEN"), path = "coverage.json")
         shell: Rscript {0}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -88,3 +88,4 @@ jobs:
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage.json
