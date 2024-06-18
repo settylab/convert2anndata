@@ -12,6 +12,7 @@ RoxygenNote: 7.3.1
 URL: https://research.fredhutch.org/setty/en.html
 BugReports: https://github.com/settylab/convert2anndata/issues
 Imports:
+    Seurat,
     SingleCellExperiment,
     anndata,
     optparse,
