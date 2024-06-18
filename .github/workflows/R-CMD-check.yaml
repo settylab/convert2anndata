@@ -27,43 +27,6 @@ jobs:
         with:
           extra-packages: any::covr, any::xml2
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.8'
-
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev libharfbuzz-dev libfribidi-dev libfontconfig1-dev libpng-dev pandoc pandoc-citeproc
-
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install anndata
-          pip install numpy
-        env:
-          RETICULATE_PYTHON: /opt/hostedtoolcache/Python/3.8.10/x64/bin/python
-
-      - name: Verify Python installation
-        run: |
-          which python
-          python --version
-          pip list
-
-      - name: Install Bioconductor packages
-        run: |
-          if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
-          BiocManager::install(c("SingleCellExperiment", "SummarizedExperiment", "S4Vectors", "BiocNeighbors"))
-        shell: Rscript {0}
-
-      - name: Install R package dependencies
-        run: |
-          install.packages('remotes')
-          install.packages('devtools')
-          remotes::install_deps(dependencies = TRUE)
-        shell: Rscript {0}
-
       - name: Install package
         run: |
           remotes::install_local()
