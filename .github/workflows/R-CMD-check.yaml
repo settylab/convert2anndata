@@ -25,7 +25,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::covr, any::xml2, any::testthat, any::BiocNeighbors, any::remotes
+          extra-packages: any::covr, any::xml2, any::testthat, any::BiocNeighbors
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -39,11 +39,6 @@ jobs:
           pip install numpy
         env:
           RETICULATE_PYTHON: /opt/hostedtoolcache/Python/3.8.10/x64/bin/python
-
-      - name: Install package
-        run: |
-          remotes::install_local()
-        shell: Rscript {0}
 
       - name: Test coverage
         run: |
