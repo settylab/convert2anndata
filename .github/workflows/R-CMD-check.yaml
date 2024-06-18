@@ -25,7 +25,12 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::covr, any::xml2, any::testthat, any::BiocNeighbors
+          extra-packages: |
+            any::covr
+            any::xml2
+            any::testthat
+            any::BiocNeighbors
+            any::pkgdown
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -39,6 +44,17 @@ jobs:
           pip install numpy
         env:
           RETICULATE_PYTHON: /opt/hostedtoolcache/Python/3.8.10/x64/bin/python
+
+      - name: Build pkgdown site
+        run: |
+          pkgdown::build_site()
+        shell: Rscript {0}
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
 
       - name: Test coverage
         run: |

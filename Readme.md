@@ -124,7 +124,8 @@ ad <- convert_to_anndata(sce, assayName = "counts", useAltExp = TRUE)
 write_h5ad(ad, "/path/to/output_file.h5ad")
 ```
 
-You can retrive the documentation through `?convert_to_anndata` for any of functions.
+Find the reference manual on the homepage: https://settylab.github.io/convert2anndata
+You can also retrive the documentation through `?convert_to_anndata` for any of functions.
 
 ## Function Reference
 

@@ -1,0 +1,14 @@
+template:
+  bootstrap: 5
+
+url: https://settylab.github.io/convert2anndata
+authors:
+  - name: "Setty-Lab"
+    href: http://setty-lab.org
+
+home:
+  title: "convert2anndata"
+  description: |
+    An R package to convert SingeCellExperiment and Seurat objects into
+    anndata as comprehensively as possible."
+  path: README.md

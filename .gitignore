@@ -58,3 +58,7 @@ __pycache__/
 
 # h5ad outputs from testing
 *.h5ad
+
+# generated website
+docs/
+docs
