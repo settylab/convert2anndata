@@ -124,22 +124,8 @@ ad <- convert_to_anndata(sce, assayName = "counts", useAltExp = TRUE)
 write_h5ad(ad, "/path/to/output_file.h5ad")
 ```
 
-Find the reference manual on the homepage: https://settylab.github.io/convert2anndata
-You can also retrive the documentation through `?convert_to_anndata` for any of functions.
-
-## Function Reference
-
-### `convert_seurat_to_sce`
-
-This function determines the class of a loaded object and converts it to a `SingleCellExperiment` object if necessary. It handles `Seurat` objects, updating old `Seurat` v2 objects if detected, and converts them to `SingleCellExperiment`. If the input object is already a `SingleCellExperiment`, it is returned as is. For other object types, an attempt is made to convert them to `SingleCellExperiment`.
-
-### `convert_to_anndata`
-
-This function converts a `SingleCellExperiment` (SCE) object to an `AnnData` object. It processes assays, dimensional reductions, and metadata, including alternative experiments (`altExps`). The main assay is used as the primary data matrix in the `AnnData` object.
-
-### `cli_convert`
-
-This function serves as a command line interface for the `convert2anndata` package. It parses command line arguments and calls the appropriate functions to convert a `SingleCellExperiment` or `Seurat` object to an `AnnData` object.
+Find the function documentation in the [reference manual](https://settylab.github.io/convert2anndata/reference/)
+or retrive the documentation through `?convert_to_anndata` for any of functions.
 
 ## License
 

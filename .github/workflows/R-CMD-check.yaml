@@ -50,6 +50,7 @@ jobs:
       - name: Build pkgdown site
         run: |
           pkgdown::build_site()
+          file.copy("docs/Readme.html", "docs/index.html", overwrite = TRUE)
         shell: Rscript {0}
 
       - name: Deploy to GitHub Pages
