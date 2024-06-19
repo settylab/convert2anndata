@@ -139,23 +139,8 @@
 <span></span>
 <span><span class="co"># Save the AnnData object</span></span>
 <span><span class="fu"><a href="https://anndata.dynverse.org/reference/write_h5ad.html" class="external-link">write_h5ad</a></span><span class="op">(</span><span class="va">ad</span>, <span class="st">"/path/to/output_file.h5ad"</span><span class="op">)</span></span></code></pre></div>
-<p>Find the reference manual on the homepage: <a href="https://settylab.github.io/convert2anndata" class="uri">https://settylab.github.io/convert2anndata</a> You can also retrive the documentation through <code><a href="reference/convert_to_anndata.html">?convert_to_anndata</a></code> for any of functions.</p>
+<p>Find the function documentation in the <a href="https://settylab.github.io/convert2anndata/reference/">reference manual</a> or retrive the documentation through <code><a href="reference/convert_to_anndata.html">?convert_to_anndata</a></code> for any of functions.</p>
 </div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="function-reference">Function Reference<a class="anchor" aria-label="anchor" href="#function-reference"></a></h2>
-<div class="section level3">
-<h3 id="convert_seurat_to_sce"><code>convert_seurat_to_sce</code><a class="anchor" aria-label="anchor" href="#convert_seurat_to_sce"></a></h3>
-<p>This function determines the class of a loaded object and converts it to a <code>SingleCellExperiment</code> object if necessary. It handles <code>Seurat</code> objects, updating old <code>Seurat</code> v2 objects if detected, and converts them to <code>SingleCellExperiment</code>. If the input object is already a <code>SingleCellExperiment</code>, it is returned as is. For other object types, an attempt is made to convert them to <code>SingleCellExperiment</code>.</p>
-</div>
-<div class="section level3">
-<h3 id="convert_to_anndata"><code>convert_to_anndata</code><a class="anchor" aria-label="anchor" href="#convert_to_anndata"></a></h3>
-<p>This function converts a <code>SingleCellExperiment</code> (SCE) object to an <code>AnnData</code> object. It processes assays, dimensional reductions, and metadata, including alternative experiments (<code>altExps</code>). The main assay is used as the primary data matrix in the <code>AnnData</code> object.</p>
-</div>
-<div class="section level3">
-<h3 id="cli_convert"><code>cli_convert</code><a class="anchor" aria-label="anchor" href="#cli_convert"></a></h3>
-<p>This function serves as a command line interface for the <code>convert2anndata</code> package. It parses command line arguments and calls the appropriate functions to convert a <code>SingleCellExperiment</code> or <code>Seurat</code> object to an <code>AnnData</code> object.</p>
 </div>
 </div>
 <div class="section level2">
