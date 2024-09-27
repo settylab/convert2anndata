@@ -1,54 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://settylab.github.io/convert2anndata/404.html</loc>
-  </url>
-  <url>
-    <loc>https://settylab.github.io/convert2anndata/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://settylab.github.io/convert2anndata/Readme.html</loc>
-  </url>
-  <url>
-    <loc>https://settylab.github.io/convert2anndata/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://settylab.github.io/convert2anndata/index.html</loc>
-  </url>
-  <url>
-    <loc>https://settylab.github.io/convert2anndata/reference/cli_convert.html</loc>
-  </url>
-  <url>
-    <loc>https://settylab.github.io/convert2anndata/reference/convert_seurat_to_sce.html</loc>
-  </url>
-  <url>
-    <loc>https://settylab.github.io/convert2anndata/reference/convert_to_anndata.html</loc>
-  </url>
-  <url>
-    <loc>https://settylab.github.io/convert2anndata/reference/extract_data.html</loc>
-  </url>
-  <url>
-    <loc>https://settylab.github.io/convert2anndata/reference/extract_pairs.html</loc>
-  </url>
-  <url>
-    <loc>https://settylab.github.io/convert2anndata/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://settylab.github.io/convert2anndata/reference/process_alt_experiments.html</loc>
-  </url>
-  <url>
-    <loc>https://settylab.github.io/convert2anndata/reference/process_dimensional_reductions.html</loc>
-  </url>
-  <url>
-    <loc>https://settylab.github.io/convert2anndata/reference/process_main_assay.html</loc>
-  </url>
-  <url>
-    <loc>https://settylab.github.io/convert2anndata/reference/process_metadata_and_pairwise.html</loc>
-  </url>
-  <url>
-    <loc>https://settylab.github.io/convert2anndata/reference/process_other_assays.html</loc>
-  </url>
-  <url>
-    <loc>https://settylab.github.io/convert2anndata/reference/timestamped_cat.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://settylab.github.io/convert2anndata/404.html</loc></url>
+<url><loc>https://settylab.github.io/convert2anndata/LICENSE-text.html</loc></url>
+<url><loc>https://settylab.github.io/convert2anndata/Readme.html</loc></url>
+<url><loc>https://settylab.github.io/convert2anndata/authors.html</loc></url>
+<url><loc>https://settylab.github.io/convert2anndata/index.html</loc></url>
+<url><loc>https://settylab.github.io/convert2anndata/reference/cli_convert.html</loc></url>
+<url><loc>https://settylab.github.io/convert2anndata/reference/convert_seurat_to_sce.html</loc></url>
+<url><loc>https://settylab.github.io/convert2anndata/reference/convert_to_anndata.html</loc></url>
+<url><loc>https://settylab.github.io/convert2anndata/reference/extract_data.html</loc></url>
+<url><loc>https://settylab.github.io/convert2anndata/reference/extract_pairs.html</loc></url>
+<url><loc>https://settylab.github.io/convert2anndata/reference/index.html</loc></url>
+<url><loc>https://settylab.github.io/convert2anndata/reference/process_alt_experiments.html</loc></url>
+<url><loc>https://settylab.github.io/convert2anndata/reference/process_dimensional_reductions.html</loc></url>
+<url><loc>https://settylab.github.io/convert2anndata/reference/process_main_assay.html</loc></url>
+<url><loc>https://settylab.github.io/convert2anndata/reference/process_metadata_and_pairwise.html</loc></url>
+<url><loc>https://settylab.github.io/convert2anndata/reference/process_other_assays.html</loc></url>
+<url><loc>https://settylab.github.io/convert2anndata/reference/timestamped_cat.html</loc></url>
 </urlset>
+
