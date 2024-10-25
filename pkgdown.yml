@@ -2,7 +2,7 @@ pandoc: 2.9.2.1
 pkgdown: 2.1.1
 pkgdown_sha: ~
 articles: {}
-last_built: 2024-09-27T17:03Z
+last_built: 2024-10-25T00:15Z
 urls:
   reference: https://settylab.github.io/convert2anndata/reference
   article: https://settylab.github.io/convert2anndata/articles

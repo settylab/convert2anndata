@@ -38,7 +38,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">process_other_assays</span><span class="op">(</span><span class="va">sce</span>, <span class="va">assayName</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">process_other_assays</span><span class="op">(</span><span class="va">sce</span>, assayName <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -50,12 +50,13 @@
 
 
 <dt id="arg-assayname">assayName<a class="anchor" aria-label="anchor" href="#arg-assayname"></a></dt>
-<dd><p>The name of the assay used as the main data matrix.</p></dd>
+<dd><p>(Optional) The name of the assay used as the main data matrix.
+If not provided, all assays will be processed.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A list of other assays for the AnnData object.</p>
+    <p>A list of processed assays.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
