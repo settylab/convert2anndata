@@ -4,15 +4,16 @@
 \alias{process_other_assays}
 \title{Process Other Assays}
 \usage{
-process_other_assays(sce, assayName)
+process_other_assays(sce, assayName = NULL)
 }
 \arguments{
 \item{sce}{A SingleCellExperiment object.}
 
-\item{assayName}{The name of the assay used as the main data matrix.}
+\item{assayName}{(Optional) The name of the assay used as the main data matrix.
+If not provided, all assays will be processed.}
 }
 \value{
-A list of other assays for the AnnData object.
+A list of processed assays.
 }
 \description{
 This function processes assays other than the main assay in the SingleCellExperiment object.

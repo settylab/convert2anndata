@@ -37,7 +37,7 @@ convert_to_anndata <- function(sce, assayName = "counts", useAltExp = TRUE) {
   X <- process_main_assay(sce, assayName)
 
   # Process other assays
-  layers <- process_other_assays(sce, assayName)
+  layers <- process_other_assays(sce)
 
   # Process dimensional reductions
   obsm <- process_dimensional_reductions(sce)
