@@ -152,7 +152,10 @@ convert_seurat_to_sce <- function(data) {
     )
     additional_slots <- setdiff(slotNames(data), known_slots)
     for (slot_name in additional_slots) {
-      metadata(sce)[[slot_name]] <- slot(data, slot_name)
+      slot_data <- slot(data, slot_name)
+      if (!is.null(slot_data) && length(slot_data) > 0) {
+        metadata(sce)[[slot_name]] <- slot_data
+      }
     }
 
     timestamped_cat("Custom conversion to SingleCellExperiment completed successfully.\n")

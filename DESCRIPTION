@@ -4,7 +4,7 @@ Title: Convert SingleCellExperiment and Seurat Objects to AnnData
 Version: 0.2.0
 Author: Dominik Otto [aut, cre] (<dotto@fredhutch.org>)
 Maintainer: Dominik Otto <dotto@fredhutch.org>
-Description: This package provides functions to convert SingleCellExperiment and Seurat objects to AnnData format. It handles assays, dimensional reductions, metadata, and alternative experiments, ensuring comprehensive conversion.
+Description: This package provides functions to convert SingleCellExperiment and Seurat objects to AnnData format. It handles split layers (Seurat), assays, dimensional reductions, metadata, and alternative experiments, ensuring comprehensive conversion.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
