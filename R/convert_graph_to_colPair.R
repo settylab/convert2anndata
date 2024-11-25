@@ -9,6 +9,8 @@
 #'                      Used to map the graph indices to the correct cell names.
 #' @return A `SelfHits` object compatible with the `colPair` slot in `SingleCellExperiment`.
 #' @importFrom S4Vectors SelfHits
+#' @import Matrix
+#' @importFrom SingleCellExperiment SingleCellExperiment
 #' @export
 convert_graph_to_colPair <- function(graph, colnames_sce) {
   if (is.matrix(graph) || inherits(graph, "Matrix")) {

@@ -134,7 +134,7 @@ convert_seurat_to_sce <- function(data) {
 
     # Transfer graphs (e.g., distance matrices)
     if (length(data@graphs) > 0) {
-      timestamped_cat("Found", length(data@graphs), "graphs. Moving to colPair.")
+      timestamped_cat("Found", length(data@graphs), "graphs. Moving to colPair.\n")
       for (graph_name in names(data@graphs)) {
         graph <- data@graphs[[graph_name]]
         if (all(rownames(graph) %in% colnames(sce)) && all(colnames(graph) %in% colnames(sce))) {

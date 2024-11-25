@@ -2,7 +2,6 @@
 
 library(testthat)
 library(S4Vectors)
-library(SingleCellExperiment)
 
 test_that("convert_graph_to_colPair works with adjacency matrix", {
   # Create an adjacency matrix

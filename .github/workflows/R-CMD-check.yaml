@@ -47,12 +47,6 @@ jobs:
         env:
           RETICULATE_PYTHON: /opt/hostedtoolcache/Python/3.8.10/x64/bin/python
 
-      - name: Install Seurat v5
-        run: |
-          install.packages("remotes")
-          remotes::install_github("satijalab/seurat", ref = "seurat5", quiet = TRUE)
-        shell: Rscript {0}
-
       - name: Build pkgdown site
         run: |
           pkgdown::build_site()
