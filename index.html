@@ -33,7 +33,7 @@
 
 <div id="convert2anndata" class="section level1">
 <p><a href="https://codecov.io/gh/settylab/convert2anndata" class="external-link"><img src="https://codecov.io/gh/settylab/convert2anndata/branch/main/graph/badge.svg" alt="Codecov test coverage"></a></p>
-<p><code>convert2anndata</code> is an R package designed to seamlessly convert <code>SingleCellExperiment</code> and <code>Seurat</code> objects into the <code>AnnData</code> format, widely used in single-cell data analysis. The package supports the conversion of assays, dimensional reductions, metadata, cell-to-cell pairing data (e.g., distances), and alternative experiments, ensuring a comprehensive transfer of information. If you encounter any issues or notice incomplete conversions, please feel free to report them on our <a href="https://github.com/settylab/convert2anndata/issues" class="external-link">GitHub issue tracker</a> to help us continuously improve.</p>
+<p><code>convert2anndata</code> is an R package designed to seamlessly convert <code>SingleCellExperiment</code> and <code>Seurat</code> objects into the <code>AnnData</code> format, widely used in single-cell data analysis. The package supports the conversion of split layers (Seurat), assays, dimensional reductions, metadata, cell-to-cell pairing data (e.g., distances), and alternative experiments, ensuring a comprehensive transfer of information. If you encounter any issues or notice incomplete conversions, please feel free to report them on our <a href="https://github.com/settylab/convert2anndata/issues" class="external-link">GitHub issue tracker</a> to help us continuously improve.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a></h2>
 <p>To install the <code>convert2anndata</code> package from GitHub through ssh, you can use the <code>remotes</code> package in R. If you don’t have <code>remotes</code> installed, you can install it first:</p>
@@ -47,10 +47,10 @@
 <span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu">install</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SingleCellExperiment"</span>, <span class="st">"SummarizedExperiment"</span>, <span class="st">"S4Vectors"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Finally, install <code>convert2anndata</code> from GitHub:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"settylab/convert2anndata"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"settylab/convert2anndata"</span><span class="op">)</span></span></code></pre></div>
 <p>Alternatively, install from GitHub authenticating through ssh:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_git</span><span class="op">(</span><span class="st">"git@github.com:settylab/convert2anndata.git"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_git.html" class="external-link">install_git</a></span><span class="op">(</span><span class="st">"git@github.com:settylab/convert2anndata.git"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="installation-with-renv">Installation with <code>renv</code>
 <a class="anchor" aria-label="anchor" href="#installation-with-renv"></a></h3>
