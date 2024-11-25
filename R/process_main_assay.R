@@ -13,25 +13,18 @@ process_main_assay <- function(sce, assayName) {
     "Processing assay '%s' for anndata.X...\n",
     assayName
   ))
+  alt_assayName <- assayName
   if (!(assayName %in% names(assays(sce)))) {
-    timestamped_cat(
-      sprintf(
-        "Error: The specified assay '%s' is not available in the provided ",
-        "SingleCellExperiment object.",
-        assayName
-      ),
-      "Use -a or --assay to specify an available assay.\n"
-    )
-    timestamped_cat(
-      "Available assays are:",
-      paste(names(assays(sce)), collapse = ", "), "\n"
-    )
-    quit(status = 1, save = "no")
+    alt_assayName <- names(assays(sce))[1]
+    timestamped_cat(sprintf(
+      "WARNING: The specified assay '%s' is not available. Using '%s' as active layer instead.\n",
+      assayName, alt_assayName
+    ))
   }
-  X <- Matrix::t(assay(sce, assayName))
+  X <- Matrix::t(assay(sce, alt_assayName))
   timestamped_cat(sprintf(
     "Using '%s' assay as the main data matrix.\n",
-    assayName
+    alt_assayName
   ))
   return(X)
 }

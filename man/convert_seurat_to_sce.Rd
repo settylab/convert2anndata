@@ -10,25 +10,21 @@ convert_seurat_to_sce(data)
 \item{data}{The loaded object to be converted.}
 }
 \value{
-A SingleCellExperiment object.
+A `SingleCellExperiment` object.
 }
 \description{
-This function determines the class of a loaded object and converts it to a SingleCellExperiment object if necessary.
-It handles Seurat objects, updating old Seurat v2 objects if detected, and converts them to SingleCellExperiment.
-If the input object is already a SingleCellExperiment, it is returned as is.
-For other object types, an attempt is made to convert them to SingleCellExperiment.
+This function converts a loaded object to a `SingleCellExperiment` object if necessary.
+It first attempts to use Seurat's built-in conversion function. If this fails (e.g., due to multiple layers),
+it performs a custom conversion, preserving multiple assays, paired data (such as distance matrices),
+and handling mismatches appropriately. It also attempts to transfer unstructured data by storing it in
+the `metadata` slot of the SingleCellExperiment object. If the input object is already a `SingleCellExperiment`,
+it is returned as is.
 }
 \details{
-The function first checks if the input object is a Seurat object. If it is, it prints a summary of the object
-and checks for indicators of Seurat v2, updating the object if necessary. It then converts the Seurat object to a SingleCellExperiment.
-If the object is already a SingleCellExperiment, it is returned directly. For other object types, an attempt is made to convert them to
-SingleCellExperiment.
-}
-\examples{
-\dontrun{
-library(Seurat)
-library(SingleCellExperiment)
-seurat_obj <- CreateSeuratObject(counts = matrix(1:4, ncol = 2))
-sce <- convert_seurat_to_sce(seurat_obj)
-}
+For assays with multiple layers (e.g., `Assay5` in Seurat v5), the function processes split layers,
+combines them where necessary, and records their names in the metadata. Layers with mismatched sizes or
+dimensions are moved to `altExps`, with name collisions resolved by appending unique suffixes.
+
+Dimensional reductions, graphs, feature metadata, and unstructured data are also transferred to ensure
+compatibility with `SingleCellExperiment`.
 }

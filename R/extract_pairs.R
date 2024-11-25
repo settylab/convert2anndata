@@ -21,14 +21,15 @@ extract_pairs <- function(pairs_function, pair_type, sce) {
   }
 
   if ("index" %in% names(pairs) && "distance" %in% names(pairs) &&
-      is(pairs[["index"]], "SelfHits") && is(pairs[["distance"]], "SelfHits")) {
+    is(pairs[["index"]], "SelfHits") && is(pairs[["distance"]], "SelfHits")) {
     timestamped_cat(pair_type, ": Detected index and distance pairwise data in SelfHit format.\n")
     index_hits <- pairs[["index"]]
     distance_hits <- pairs[["distance"]]
 
     if (all(queryHits(index_hits) == queryHits(distance_hits)) &&
-        all(subjectHits(index_hits) == subjectHits(distance_hits))) {
-      timestamped_cat(pair_type, 
+      all(subjectHits(index_hits) == subjectHits(distance_hits))) {
+      timestamped_cat(
+        pair_type,
         ": Index and distance 'from' and 'to' columns agree. Combining info to create 'distance' and 'connectivity' sparse matrix.\n"
       )
       pairs_list[["distance"]] <- sparseMatrix(
@@ -48,7 +49,8 @@ extract_pairs <- function(pairs_function, pair_type, sce) {
       pairs[["index"]] <- NULL
       pairs[["distance"]] <- NULL
     } else {
-      timestamped_cat(pair_type,
+      timestamped_cat(
+        pair_type,
         ": WARNING: Index and distance 'from' and 'to' columns do not agree. Using them individually and interpreting 'to' column as cell index.\n"
       )
     }
