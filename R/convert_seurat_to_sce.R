@@ -31,24 +31,22 @@ convert_seurat_to_sce <- function(data) {
     # Update Seurat object if necessary
     data <- update_seurat_object(data)
 
-    # Attempt to use Seurat's built-in conversion function (disabled as requested)
-    if (FALSE) {
-      timestamped_cat("Attempting to convert using Seurat's built-in function...\n")
-      sce <- tryCatch(
-        {
-          sce_obj <- as.SingleCellExperiment(data)
-          timestamped_cat("Conversion using Seurat's built-in function succeeded.\n")
-          return(sce_obj)
-        },
-        error = function(e) {
-          timestamped_cat("Seurat's built-in conversion failed: ", e$message, "\n")
-          NULL
-        }
-      )
-      if (!is.null(sce)) {
-        return(sce)
-      }
-    }
+    # Attempt to use Seurat's built-in conversion function
+      # timestamped_cat("Attempting to convert using Seurat's built-in function...\n")
+      # sce <- tryCatch(
+      #   {
+      #     sce_obj <- as.SingleCellExperiment(data)
+      #     timestamped_cat("Conversion using Seurat's built-in function succeeded.\n")
+      #     return(sce_obj)
+      #   },
+      #   error = function(e) {
+      #     timestamped_cat("Seurat's built-in conversion failed: ", e$message, "\n")
+      #     NULL
+      #   }
+      # )
+      # if (!is.null(sce)) {
+      #   return(sce)
+      # }
 
     # Proceeding with custom conversion
     timestamped_cat("Proceeding with custom conversion...\n")

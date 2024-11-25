@@ -62,3 +62,4 @@ __pycache__/
 # generated website
 docs
 .ipynb_checkpoints
+testlog.txt
