@@ -81,7 +81,7 @@ convert_to_anndata <- function(sce, assayName = "counts", useAltExp = TRUE) {
   }
 
   # Process metadata and pairwise matrices
-  uns_data <- process_metadata_and_pairwise(sce, alt_exps, X)
+  uns_data <- process_metadata_and_pairwise(sce, alt_exps, X, obsm)
 
   # Create a list of arguments for AnnData
   anndata_args <- list(
