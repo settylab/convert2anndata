@@ -8,6 +8,7 @@
 #' @param sce A SingleCellExperiment object from which to extract the pairwise data.
 #' @return A list of pairwise data as sparse matrices.
 #' @importFrom SingleCellExperiment colPairs rowPairs
+#' @importFrom S4Vectors mcols
 #' @importFrom Matrix sparseMatrix
 #' @importFrom methods is
 #' @export
