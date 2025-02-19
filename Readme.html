@@ -32,6 +32,7 @@
     </div>
 
 <div id="convert2anndata" class="section level1">
+
 <p><a href="https://codecov.io/gh/settylab/convert2anndata" class="external-link"><img src="https://codecov.io/gh/settylab/convert2anndata/branch/main/graph/badge.svg" alt="Codecov test coverage"></a></p>
 <p><code>convert2anndata</code> is an R package designed to seamlessly convert <code>SingleCellExperiment</code> and <code>Seurat</code> objects into the <code>AnnData</code> format, widely used in single-cell data analysis. The package supports the conversion of split layers (Seurat), assays, dimensional reductions, metadata, cell-to-cell pairing data (e.g., distances), and alternative experiments, ensuring a comprehensive transfer of information. If you encounter any issues or notice incomplete conversions, please feel free to report them on our <a href="https://github.com/settylab/convert2anndata/issues" class="external-link">GitHub issue tracker</a> to help us continuously improve.</p>
 <div class="section level2">
@@ -82,8 +83,8 @@
 <div class="section level3">
 <h3 id="make-an-alias">Make an alias<a class="anchor" aria-label="anchor" href="#make-an-alias"></a></h3>
 <p>Consider making an alias for the command line tool, e.g., with</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="bu">alias</span> c2a=<span class="st">'Rscript -e "convert2anndata::cli_convert()"'</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a><span class="bu">echo</span> <span class="st">'alias c2a="Rscript -e \"convert2anndata::cli_convert()\""'</span> <span class="op">&gt;&gt;</span> ~/.bashrc</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="bu">alias</span> c2a=<span class="st">'Rscript -e "convert2anndata::cli_convert()"'</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="bu">echo</span> <span class="st">'alias c2a="Rscript -e \"convert2anndata::cli_convert()\""'</span> <span class="op">&gt;&gt;</span> ~/.bashrc</span></code></pre></div>
 <p>Now you can use the command line toole, explained under <code>Command Line Usage</code> below, just by typing, e.g., <code>c2a -h</code>.</p>
 </div>
 </div>
@@ -92,9 +93,9 @@
 <div class="section level3">
 <h3 id="command-line-usage">Command Line Usage<a class="anchor" aria-label="anchor" href="#command-line-usage"></a></h3>
 <p>You can use the <code>convert2anndata</code> package from the command line to convert <code>SingleCellExperiment</code> or <code>Seurat</code> objects stored in RDS files to <code>AnnData</code> format (H5AD files). Here is an example of how to use it:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="ex">Rscript</span> -e <span class="st">"convert2anndata::cli_convert()"</span> -i /path/to/input_file.rds -o /path/to/output_file.h5ad</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">"convert2anndata::cli_convert()"</span> <span class="at">-i</span> /path/to/input_file.rds <span class="at">-o</span> /path/to/output_file.h5ad</span></code></pre></div>
 <p>If you set up an alias, as suggested in the <code>Installation</code> section, then you can also conviniently run</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="ex">c2a</span> -i /path/to/input_file.rds -o /path/to/output_file.h5ad</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="ex">c2a</span> <span class="at">-i</span> /path/to/input_file.rds <span class="at">-o</span> /path/to/output_file.h5ad</span></code></pre></div>
 <div class="section level4">
 <h4 id="command-line-options">Command Line Options<a class="anchor" aria-label="anchor" href="#command-line-options"></a></h4>
 <ul><li>
