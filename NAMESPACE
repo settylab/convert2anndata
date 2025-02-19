@@ -3,6 +3,7 @@
 export(align_metadata_seurat)
 export(attach_alt_experiments_sce)
 export(cli_convert)
+export(convert_commands)
 export(convert_graph_to_colPair)
 export(convert_seurat_to_sce)
 export(convert_to_anndata)

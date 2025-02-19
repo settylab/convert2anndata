@@ -47,6 +47,48 @@ create_mock_sce <- function() {
   return(sce)
 }
 
+test_that("convert_to_anndata works with Seurat object and preserves commands in a serializable format", {
+  skip_if_not_installed("Seurat")
+  library(Seurat)
+
+  # Create Seurat object with command history
+  seurat_obj <- CreateSeuratObject(counts = matrix(rpois(200, lambda = 5), nrow = 20, ncol = 10))
+  seurat_obj <- NormalizeData(seurat_obj)
+  seurat_obj <- FindVariableFeatures(seurat_obj)
+  seurat_obj <- ScaleData(seurat_obj)
+  seurat_obj <- RunPCA(seurat_obj, npcs = 5)
+
+  # Convert to SCE
+  sce <- convert_seurat_to_sce(seurat_obj)
+
+  # Convert to AnnData
+  ad <- convert_to_anndata(sce)
+
+  # Ensure it is an R6 object
+  expect_true(R6::is.R6(ad))
+
+  # Check that dimensions are preserved
+  expect_equal(dim(ad$X), rev(dim(sce)))
+
+  # Ensure commands are present in `uns`
+  expect_true("commands" %in% names(ad$uns))
+  expect_true(!is.null(ad$uns$commands))
+
+  # Ensure commands are **fully serializable**
+  expect_true(all(sapply(ad$uns$commands, function(cmd) {
+    all(sapply(cmd, function(value) {
+      is.null(value) || is.atomic(value) || is.list(value)
+    }))
+  })))
+
+  # Ensure that writing to HDF5 does not raise errors
+  temp_h5ad <- tempfile(fileext = ".h5ad")
+  expect_silent(write_h5ad(ad, temp_h5ad))
+
+  # Ensure written H5AD file is readable
+  expect_silent(read_h5ad(temp_h5ad))
+})
+
 test_that("convert_to_anndata works correctly", {
   sce <- SingleCellExperiment::SingleCellExperiment(list(counts = matrix(1:4, ncol = 2)))
   tryCatch(

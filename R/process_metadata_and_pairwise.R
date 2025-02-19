@@ -63,6 +63,12 @@ process_metadata_and_pairwise <- function(sce, alt_exps_data, X, obsm = list()) 
         "Transferred '%s' to variable matrices (varm).\n",
         name
       ))
+    } else if (is.list(item) && all(sapply(item, inherits, "SeuratCommand"))) {
+      uns[[name]] <- convert_commands(item)  # Convert SeuratCommand list
+      timestamped_cat(sprintf(
+        "Converted SeuratCommand list '%s' for serialization.\n",
+        name
+      ))
     }
   }
   
