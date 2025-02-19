@@ -2,6 +2,7 @@ library(testthat)
 library(convert2anndata)
 library(SingleCellExperiment)
 library(Seurat)
+library(Matrix)
 
 # Test conversion with a Seurat v5 object without layers
 test_that("convert_seurat_to_sce works with Seurat v5 object without layers", {
@@ -16,6 +17,38 @@ test_that("convert_seurat_to_sce works with Seurat v5 object without layers", {
   sce <- convert_seurat_to_sce(seurat_obj)
   expect_s4_class(sce, "SingleCellExperiment")
 })
+
+# Test conversion with a Seurat v5 object with a commands history
+test_that("convert_seurat_to_sce works with Seurat v5 object with command history", {
+  # Create a mock Seurat v5 object
+  counts_matrix <- Matrix(matrix(rpois(200, lambda = 5), nrow = 20, ncol = 30), sparse = TRUE)
+  seurat_obj <- CreateSeuratObject(counts = counts_matrix)
+  seurat_obj <- NormalizeData(seurat_obj)
+  seurat_obj <- FindVariableFeatures(seurat_obj, selection.method = "dispersion", nfeatures = 10)
+  seurat_obj <- ScaleData(seurat_obj)
+  seurat_obj <- RunPCA(seurat_obj, npcs = 5, approx = FALSE, nfeatures.print = 5)
+  
+  # Ensure command history exists
+  expect_true(!is.null(seurat_obj@commands))
+  
+  # Convert to SingleCellExperiment
+  sce_obj <- convert_seurat_to_sce(seurat_obj)
+  
+  # Validate conversion
+  expect_s4_class(sce_obj, "SingleCellExperiment")
+  expect_equal(dim(sce_obj), dim(seurat_obj))
+  expect_true(all(rownames(sce_obj) == rownames(seurat_obj)))
+  expect_true(all(colnames(sce_obj) == colnames(seurat_obj)))
+  
+  # Ensure metadata is preserved
+  expect_true(!is.null(metadata(sce_obj)))
+  
+  # Ensure assay data is correctly transferred
+  expect_true("RNA_counts" %in% names(assays(sce_obj)))
+  expect_true("RNA_data" %in% names(assays(sce_obj)))
+  expect_equal(assay(sce_obj, "RNA_counts"), GetAssayData(seurat_obj, layer = "counts"))
+})
+
 
 # Test conversion with a Seurat v5 object with layers
 test_that("convert_seurat_to_sce works with Seurat v5 object with layers", {
