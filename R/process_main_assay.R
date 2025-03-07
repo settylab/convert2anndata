@@ -22,8 +22,10 @@ process_main_assay <- function(sce, assayName) {
     ))
   }
   X <- Matrix::t(assay(sce, alt_assayName))
+  # Ensure X is in CsparseMatrix format
+  X <- methods::as(X, "CsparseMatrix")
   timestamped_cat(sprintf(
-    "Using '%s' assay as the main data matrix.\n",
+    "Using '%s' assay as the main data matrix (converted to CsparseMatrix).\n",
     alt_assayName
   ))
   return(X)

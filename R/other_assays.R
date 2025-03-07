@@ -19,7 +19,10 @@ process_other_assays <- function(sce, assayName = NULL) {
     all_assays <- all_assays[!names(all_assays) %in% assayName]
   }
 
+  # First transpose all assays
   processed_assays <- lapply(all_assays, Matrix::t)
-  timestamped_cat("Assays processed.\n")
+  # Then ensure all matrices are in CsparseMatrix format
+  processed_assays <- lapply(processed_assays, function(mat) methods::as(mat, "CsparseMatrix"))
+  timestamped_cat("Assays processed and converted to CsparseMatrix format.\n")
   return(processed_assays)
 }

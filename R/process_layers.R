@@ -57,10 +57,8 @@ process_layers <- function(assay_object) {
       })
       combined_layer_counts <- do.call(cbind, layer_counts_list)
 
-      # Convert to sparse matrix if not already
-      if (!inherits(combined_layer_counts, "dgCMatrix")) {
-        combined_layer_counts <- Matrix(combined_layer_counts, sparse = TRUE)
-      }
+      # Convert to CsparseMatrix format
+      combined_layer_counts <- methods::as(combined_layer_counts, "CsparseMatrix")
 
       # Extract split names
       group_names <- sapply(strsplit(group_layers, ".", fixed = TRUE), `[`, 2)
