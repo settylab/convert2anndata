@@ -54,8 +54,8 @@ convert_seurat_to_sce <- function(data) {
     for (assay_name in assay_names) {
       assay_object <- data@assays[[assay_name]]
       timestamped_cat("Processing assay:", assay_name, "\n")
-      ref_cells <- colnames(default_assay)
-      ref_features <- rownames(default_assay)
+      ref_cells <- colnames(assay_object)
+      ref_features <- rownames(assay_object)
       
       if (inherits(assay_object, "Assay5")) {
         # Handle multi-layered assays.
