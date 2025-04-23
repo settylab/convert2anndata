@@ -46,8 +46,6 @@ convert_seurat_to_sce <- function(data) {
     # Determine reference features and cell names from the default assay.
     default_assay_name <- DefaultAssay(data)
     default_assay <- data@assays[[default_assay_name]]
-    ref_cells <- colnames(default_assay)
-    ref_features <- rownames(default_assay)
     
     # Collect metadata (colData; one row per cell).
     metadata_data <- data@meta.data
@@ -56,6 +54,8 @@ convert_seurat_to_sce <- function(data) {
     for (assay_name in assay_names) {
       assay_object <- data@assays[[assay_name]]
       timestamped_cat("Processing assay:", assay_name, "\n")
+      ref_cells <- colnames(default_assay)
+      ref_features <- rownames(default_assay)
       
       if (inherits(assay_object, "Assay5")) {
         # Handle multi-layered assays.
