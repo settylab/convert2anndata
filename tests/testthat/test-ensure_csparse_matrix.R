@@ -13,9 +13,12 @@ test_that("ensure_csparse_matrix handles various matrix types correctly", {
   expect_true(methods::is(result_dgc, "CsparseMatrix"))
   
   # Test with dgTMatrix (triplet format, not CsparseMatrix)
+  # Matrix >= 1.5 returns dgCMatrix by default from sparseMatrix(); use
+  # repr = "T" to force the triplet representation we actually want to test.
   ij <- expand.grid(i = 1:5, j = 1:5)
   ij <- ij[sample(nrow(ij), 10), ]
-  dgt_mat <- Matrix::sparseMatrix(i = ij$i, j = ij$j, x = 1:10, dims = c(5, 5))
+  dgt_mat <- Matrix::sparseMatrix(i = ij$i, j = ij$j, x = 1:10,
+                                  dims = c(5, 5), repr = "T")
   expect_false(methods::is(dgt_mat, "CsparseMatrix"))
   result_dgt <- ensure_csparse_matrix(dgt_mat)
   expect_true(methods::is(result_dgt, "CsparseMatrix"))

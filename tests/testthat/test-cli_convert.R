@@ -1,6 +1,32 @@
 library(testthat)
 library(withr)
 
+# These tests spawn subprocess Rscripts that load `library(convert2anndata)`.
+# That requires the package to be *installed* in a libpath the subprocess
+# can see. Under `devtools::test()` (where the package is only loaded via
+# load_all), the subprocess won't find it and every test errors. Skip the
+# whole file in that situation rather than emitting noise.
+package_installed <- nzchar(suppressWarnings(
+  system2(
+    file.path(R.home(), "bin", "Rscript"),
+    args = c("-e", "cat(requireNamespace('convert2anndata', quietly=TRUE))"),
+    stdout = TRUE, stderr = FALSE
+  )[1]
+)) && identical(
+  suppressWarnings(system2(
+    file.path(R.home(), "bin", "Rscript"),
+    args = c("-e", "cat(requireNamespace('convert2anndata', quietly=TRUE))"),
+    stdout = TRUE, stderr = FALSE
+  )[1]),
+  "TRUE"
+)
+if (!package_installed) {
+  skip_file <- function() invisible(NULL)
+  test_that("cli_convert tests skipped (package not installed in subprocess libpath)", {
+    skip("convert2anndata is not installed in a libpath visible to subprocess Rscripts; run after R CMD INSTALL.")
+  })
+} else {
+
 # Function to run shell commands and capture output
 run_shell_command <- function(cmd) {
   cat("Running: ", cmd, "\n")
@@ -45,3 +71,5 @@ test_that("cli_convert stops without input", {
   cat("Result:\n", paste(result, collapse = "\n"), "\n")
   expect_true(any(grepl("Test passed: No input", result)))
 })
+
+}  # end if (package_installed)

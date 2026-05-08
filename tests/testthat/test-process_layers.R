@@ -27,7 +27,7 @@ test_that("process_layers combines split layers with collisions correctly", {
   expect_equal(as.matrix(combined_counts), counts_matrix)
 
   # Check that the original split layers are removed
-  remaining_layers <- Layers(result$assay_object)
+  remaining_layers <- SeuratObject::Layers(result$assay_object)
   expect_false("counts.A" %in% remaining_layers)
   expect_false("counts.B" %in% remaining_layers)
   expect_true("counts.1" %in% remaining_layers)
@@ -58,7 +58,7 @@ test_that("process_layers combines split layers without collisions correctly", {
   expect_equal(as.matrix(combined_counts), counts_matrix)
 
   # Check that the original split layers are removed
-  remaining_layers <- Layers(result$assay_object)
+  remaining_layers <- SeuratObject::Layers(result$assay_object)
   expect_false("counts.A" %in% remaining_layers)
   expect_false("counts.B" %in% remaining_layers)
   expect_false("counts.1" %in% remaining_layers)
@@ -86,7 +86,7 @@ test_that("process_layers handles non-split layers correctly", {
   expect_equal(result$split_names, list())
 
   # Validate that the non-split layer remains intact
-  remaining_layers <- Layers(result$assay_object)
+  remaining_layers <- SeuratObject::Layers(result$assay_object)
   expect_true("data" %in% remaining_layers)
   expect_equal(length(remaining_layers), 2)
 })
@@ -120,7 +120,7 @@ test_that("process_layers handles mixed split and non-split layers", {
   expect_equal(as.matrix(combined_counts), counts_matrix)
 
   # Validate that the non-split layer remains intact
-  remaining_layers <- Layers(result$assay_object)
+  remaining_layers <- SeuratObject::Layers(result$assay_object)
   expect_true("scale.data" %in% remaining_layers)
   expect_true("counts" %in% remaining_layers)
   expect_true("test" %in% remaining_layers)
