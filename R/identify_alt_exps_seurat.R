@@ -18,7 +18,7 @@ identify_alt_exps_seurat <- function(data) {
       counts <- GetAssayData(assay, layer = "counts")
       has_data <- (nrow(counts) > 0 && ncol(counts) > 0) || length(assay@layers) > 0
     } else if (inherits(assay, "Assay")) {
-      counts <- GetAssayData(assay, slot = "counts")
+      counts <- GetAssayData(assay, layer = "counts")
       has_data <- nrow(counts) > 0 && ncol(counts) > 0
     } else {
       # Unsupported assay type

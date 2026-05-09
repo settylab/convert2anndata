@@ -111,6 +111,20 @@ convert_anndata_to_seurat <- function(adata,
     use_when_no_layer <- !has_counts_layer && use_raw == "auto"
     if (use_raw == "always" || use_when_no_layer) {
       raw_mat <- extract_anndata_raw(adata, obs_names = obs_names)
+      # In "auto" mode, only use raw when it has the same gene set as X.
+      # The typical scanpy pattern that "auto" is meant to support is
+      # `adata.raw = adata` *before* normalisation, in which case raw and
+      # adata share genes and raw is just the un-normalised counts. When
+      # raw has a *different* (usually larger, unfiltered) gene set, the
+      # analysis-ready data is adata$X, so prefer that and ignore raw.
+      if (use_raw == "auto" && !is.null(raw_mat) &&
+          ncol(raw_mat) != as.integer(adata$n_vars)) {
+        timestamped_cat(sprintf(
+          "adata$raw has %d genes vs adata$X's %d; raw is the unfiltered set. Using adata$X (use_raw='always' to override).\n",
+          ncol(raw_mat), as.integer(adata$n_vars)
+        ))
+        raw_mat <- NULL
+      }
     }
   }
 

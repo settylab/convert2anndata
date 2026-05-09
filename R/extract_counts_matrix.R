@@ -17,7 +17,9 @@ extract_counts_matrix <- function(assay_object) {
           GetAssayData(assay_object)
         }
       } else if (inherits(assay_object, "Assay")) {
-        GetAssayData(assay_object, slot = "counts")
+        # SeuratObject >= 5.0.0: `slot` is defunct; use `layer`. Older
+        # versions accepted both. `layer` works on both.
+        GetAssayData(assay_object, layer = "counts")
       } else {
         stop("Unsupported assay class: ", class(assay_object))
       }

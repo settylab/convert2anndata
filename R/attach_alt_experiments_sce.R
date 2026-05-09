@@ -19,7 +19,7 @@ attach_alt_experiments_sce <- function(data, sce, altExp_names) {
     if (inherits(alt_assay, "Assay5")) {
       alt_counts <- GetAssayData(alt_assay, layer = "counts")
     } else if (inherits(alt_assay, "Assay")) {
-      alt_counts <- GetAssayData(alt_assay, slot = "counts")
+      alt_counts <- GetAssayData(alt_assay, layer = "counts")
     } else {
       next # Unsupported assay type
     }
