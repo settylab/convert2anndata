@@ -11,7 +11,7 @@
 #'   checking shape and for setting dimnames.
 #' @return A named list of sparse matrices (`n_obs x n_obs`). Empty
 #'   list if `adata$obsp` is empty / missing.
-#' @keywords internal
+#' @export
 extract_anndata_obsp <- function(adata, obs_names = NULL) {
   obsp <- tryCatch(adata$obsp, error = function(e) NULL)
   if (is.null(obsp)) return(list())

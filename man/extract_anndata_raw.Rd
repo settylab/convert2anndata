@@ -26,4 +26,3 @@ features), with cell rownames from `obs_names` (the active AnnData)
 and feature column names from `adata$raw$var_names`. Returns `NULL`
 if `adata$raw` is unset.
 }
-\keyword{internal}

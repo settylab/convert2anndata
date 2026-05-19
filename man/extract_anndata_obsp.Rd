@@ -23,4 +23,3 @@ This helper returns them as a named list of sparse cell x cell
 CsparseMatrix objects, ready to be attached as Seurat `Graphs` or
 SCE `colPairs`.
 }
-\keyword{internal}

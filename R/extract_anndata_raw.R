@@ -13,7 +13,7 @@
 #' @param adata An AnnData object.
 #' @param obs_names Character vector of cell names. Optional.
 #' @return A CsparseMatrix of shape `n_obs x n_raw_vars`, or `NULL`.
-#' @keywords internal
+#' @export
 extract_anndata_raw <- function(adata, obs_names = NULL) {
   raw <- tryCatch(adata$raw, error = function(e) NULL)
   if (is.null(raw)) return(NULL)
