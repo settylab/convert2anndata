@@ -2,6 +2,7 @@ template:
   bootstrap: 5
 
 url: https://settylab.github.io/convert2anndata
+
 authors:
   - name: "Setty-Lab"
     href: http://setty-lab.org
@@ -9,6 +10,74 @@ authors:
 home:
   title: "convert2anndata"
   description: >
-    An R package to convert SingeCellExperiment and Seurat objects into
-    anndata as comprehensively as possible.
+    An R package for bidirectional conversion between AnnData (.h5ad) and
+    either SingleCellExperiment or Seurat objects, aiming for a faithful
+    roundtrip of assays, layers, dimensional reductions, metadata, and
+    cell/feature graphs.
   path: README.md
+
+reference:
+  - title: "Bidirectional conversion"
+    desc: >
+      Main entry points. Converters accept either an in-memory object or
+      a path to an .h5ad / .rds file; cli_convert() is the command-line
+      dispatcher that picks a direction from the file extension.
+    contents:
+      - convert_anndata_to_seurat
+      - convert_anndata_to_sce
+      - convert_to_anndata
+      - convert_seurat_to_sce
+      - cli_convert
+
+  - title: "Python environment"
+    desc: >
+      Helpers for wiring reticulate to a Python interpreter that has the
+      anndata module installed, and for diagnosing misconfiguration.
+    contents:
+      - setup_anndata_python
+      - check_anndata_python
+      - diagnose_anndata_python
+
+  - title: "AnnData component extractors"
+    desc: >
+      Lower-level accessors that pull individual pieces out of an AnnData
+      object as R-native matrices / data frames. Useful when building a
+      custom conversion.
+    contents:
+      - extract_anndata_X
+      - extract_anndata_layers
+      - extract_anndata_obsm
+      - extract_anndata_obsp
+      - extract_anndata_raw
+      - anndata_names
+
+  - title: "Attaching components to R objects"
+    contents:
+      - attach_reductions_seurat
+      - attach_alt_experiments_sce
+      - convert_graph_to_colPair
+
+  - title: "Internal building blocks"
+    desc: >
+      Exported for advanced use and testing, but not part of the
+      recommended user-facing API. Most users only need the converters
+      in the first section.
+    contents:
+      - align_metadata_seurat
+      - convert_commands
+      - create_combined_assay
+      - default_reduction_map
+      - ensure_csparse_matrix
+      - extract_counts_matrix
+      - extract_data
+      - extract_pairs
+      - identify_alt_exps_seurat
+      - preserve_reductions_seurat
+      - process_alt_experiments
+      - process_dimensional_reductions
+      - process_layers
+      - process_main_assay
+      - process_metadata_and_pairwise
+      - process_other_assays
+      - timestamped_cat
+      - update_seurat_object

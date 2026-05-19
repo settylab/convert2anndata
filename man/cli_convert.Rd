@@ -7,7 +7,9 @@
 cli_convert()
 }
 \description{
-This function serves as a command line interface for the convert2anndata package.
-It parses command line arguments and calls the appropriate functions to convert
-a SingleCellExperiment or Seurat object to an AnnData object.
+Bidirectional CLI: dispatches on the input file extension. An `.rds` input
+is treated as a Seurat or SingleCellExperiment object and converted to an
+AnnData `.h5ad` file. An `.h5ad` input is read with `anndata::read_h5ad()`
+and converted to a Seurat (default) or SingleCellExperiment object saved
+to `.rds`.
 }

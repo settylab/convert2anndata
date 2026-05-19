@@ -27,22 +27,26 @@ test_that("sparse matrix conversion works in integration", {
     diag_counts = diag_counts
   ))
   
-  # Check initial matrix types
+  # Check initial matrix types. Older Matrix kept dgTMatrix and ddiMatrix
+  # distinct; newer Matrix sometimes auto-coerces sliced Diagonals to
+  # CsparseMatrix when they're stored on an SCE assay. We only require the
+  # *triplet* (logcounts) entry to start out non-Csparse.
   expect_true(methods::is(assay(sce, "counts"), "CsparseMatrix"))
   expect_false(methods::is(assay(sce, "logcounts"), "CsparseMatrix"))
-  expect_false(methods::is(assay(sce, "diag_counts"), "CsparseMatrix"))
   
   # Set up a dimensional reduction
   reducedDim(sce, "PCA") <- matrix(rnorm(50 * 10), 50, 10)
   
-  # Add metadata that's a sparse matrix (not CsparseMatrix)
+  # Add metadata that's a sparse matrix (not CsparseMatrix). Force triplet
+  # via repr = "T" since Matrix >= 1.5 defaults sparseMatrix() to dgC.
   int_metadata(sce)$sparse_meta <- Matrix::sparseMatrix(
     i = sample(1:50, 20),
     j = sample(1:50, 20),
     x = 1:20,
-    dims = c(50, 50)
+    dims = c(50, 50),
+    repr = "T"
   )
-  
+
   # Verify it's not a CsparseMatrix
   expect_false(methods::is(int_metadata(sce)$sparse_meta, "CsparseMatrix"))
   

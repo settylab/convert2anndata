@@ -35,17 +35,18 @@ jobs:
             any::pkgdown
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        id: setup-python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.8'
+          python-version: '3.11'
 
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install anndata
-          pip install numpy
-        env:
-          RETICULATE_PYTHON: /opt/hostedtoolcache/Python/3.8.10/x64/bin/python
+          pip install anndata numpy
+          # Pin reticulate to this interpreter for all subsequent steps so
+          # the AnnData <-> Seurat/SCE tests run instead of skipping.
+          echo "RETICULATE_PYTHON=${{ steps.setup-python.outputs.python-path }}" >> "$GITHUB_ENV"
 
       - name: Build pkgdown site
         run: |

@@ -2,7 +2,24 @@
 
 [![Codecov test coverage](https://codecov.io/gh/settylab/convert2anndata/branch/main/graph/badge.svg)](https://codecov.io/gh/settylab/convert2anndata)
 
-`convert2anndata` is an R package designed to seamlessly convert `SingleCellExperiment` and `Seurat` objects into the `AnnData` format, widely used in single-cell data analysis. The package supports the conversion of split layers (Seurat), assays, dimensional reductions, metadata, cell-to-cell pairing data (e.g., distances), and alternative experiments, ensuring a comprehensive transfer of information. If you encounter any issues or notice incomplete conversions, please feel free to report them on our [GitHub issue tracker](https://github.com/settylab/convert2anndata/issues) to help us continuously improve.
+`convert2anndata` is an R package for **bidirectional conversion** between
+`AnnData` (the canonical Python single-cell format) and either
+`SingleCellExperiment` or `Seurat` objects. It handles split layers
+(Seurat), assays, dimensional reductions (`obsm` ↔ `reducedDims` /
+Seurat reductions), metadata (`obs`/`var` ↔ `colData`/`rowData`), layers,
+and alternative experiments, aiming for a faithful roundtrip. If you
+encounter any issues or notice incomplete conversions, please feel free
+to report them on our
+[GitHub issue tracker](https://github.com/settylab/convert2anndata/issues)
+to help us continuously improve.
+
+### Direction reference
+
+| From → To | Function |
+|---|---|
+| Seurat / SCE → AnnData | `convert_to_anndata(sce, ...)` (Seurat first via `convert_seurat_to_sce()`) |
+| AnnData → Seurat | `convert_anndata_to_seurat(adata, ...)` |
+| AnnData → SCE | `convert_anndata_to_sce(adata, ...)` |
 
 
 ## Installation
@@ -82,10 +99,20 @@ Now you can use the command line toole, explained under `Command Line Usage` bel
 
 ### Command Line Usage
 
-You can use the `convert2anndata` package from the command line to convert `SingleCellExperiment` or `Seurat` objects stored in RDS files to `AnnData` format (H5AD files). Here is an example of how to use it:
+The CLI dispatches on the input file extension. `.rds` input is treated
+as a Seurat or SingleCellExperiment object and converted to `.h5ad`;
+`.h5ad` input is read with `anndata::read_h5ad()` and converted to a
+Seurat (default) or SCE object saved to `.rds`.
 
 ```sh
-Rscript -e "convert2anndata::cli_convert()" -i /path/to/input_file.rds -o /path/to/output_file.h5ad
+# RDS -> H5AD
+Rscript -e "convert2anndata::cli_convert()" -i /path/to/input.rds -o /path/to/output.h5ad
+
+# H5AD -> RDS (Seurat by default)
+Rscript -e "convert2anndata::cli_convert()" -i /path/to/input.h5ad -o /path/to/output.rds
+
+# H5AD -> RDS (SingleCellExperiment)
+Rscript -e "convert2anndata::cli_convert()" -i /path/to/input.h5ad -t sce
 ```
 
 If you set up an alias, as suggested in the `Installation` section, then you can also conviniently run
@@ -96,17 +123,18 @@ c2a -i /path/to/input_file.rds -o /path/to/output_file.h5ad
 
 #### Command Line Options
 
-- `-i`, `--input`: Path to the input RDS file containing the `SingleCellExperiment` or `Seurat` object. This option is required.
-- `-o`, `--output`: Path to the output H5AD file. If not specified, the output path is derived by replacing the `.rds` extension of the input path with `.h5ad`.
-- `-a`, `--assay`: The assay to use as the main matrix (`anndata.X`). Defaults to 'counts'.
-- `-d`, `--disable-recursive-altExp`: Disable recursive recovery of `altExperiments` and discard them instead.
-- `-h`, `--help`: Show a help massage and exit.
+- `-i`, `--input`: Path to the input file (`.rds` or `.h5ad`). Required.
+- `-o`, `--output`: Path to the output file. If not specified, the output path is derived by swapping the extension (`.rds` ↔ `.h5ad`).
+- `-a`, `--assay`: For `.rds → .h5ad`, the assay to use as `anndata.X`. For `.h5ad → .rds`, the layer name to use as the counts assay. Defaults to `counts`.
+- `-d`, `--disable-recursive-altExp`: Disable recursive recovery of `altExperiments` and discard them instead. Applies to `.rds → .h5ad`.
+- `-t`, `--target`: For `.h5ad → .rds` only: target object type, `seurat` (default) or `sce`.
+- `-h`, `--help`: Show a help message and exit.
 
 ### R Usage
 
 You can also use the `convert2anndata` package directly in R. Below are examples of how to convert `SingleCellExperiment` or `Seurat` objects to `AnnData` format within an R session.
 
-#### Example
+#### Seurat / SCE → AnnData
 
 ```r
 library(convert2anndata)
@@ -125,8 +153,110 @@ ad <- convert_to_anndata(sce, assayName = "counts", useAltExp = TRUE)
 write_h5ad(ad, "/path/to/output_file.h5ad")
 ```
 
+#### AnnData → Seurat
+
+```r
+library(convert2anndata)
+library(anndata)
+
+# Read an .h5ad file as an AnnData R6 object
+adata <- read_h5ad("/path/to/input.h5ad")
+
+# Convert to Seurat. counts_layer selects which layer becomes the counts
+# assay; if the layer is missing, adata$X is used.
+seurat_obj <- convert_anndata_to_seurat(adata, counts_layer = "counts")
+
+saveRDS(seurat_obj, "/path/to/output.rds")
+```
+
+#### AnnData → SingleCellExperiment
+
+```r
+adata <- read_h5ad("/path/to/input.h5ad")
+sce <- convert_anndata_to_sce(adata, counts_layer = "counts")
+```
+
 Find the function documentation in the [reference manual](https://settylab.github.io/convert2anndata/reference/)
 or retrive the documentation through `?convert_to_anndata` for any of functions.
+
+## Python environment
+
+`convert2anndata` is a thin R-side wrapper around the Python `anndata`
+library, accessed through `reticulate`. **You must have a Python
+interpreter that has `anndata` (and a compatible `numpy`) installed
+before any conversion call will work.** The package does not bundle
+Python.
+
+The simplest setup uses the bundled installer from the `anndata` R
+package, which provisions a managed Python venv for you:
+
+```r
+anndata::install_anndata()
+```
+
+If you already have a Python environment with `anndata` installed
+(e.g. a conda/micromamba env, or a `uv` venv), point reticulate at it.
+The package looks at, in order:
+
+1. an explicit `conda_env` argument (path entrypoints only),
+2. `Sys.getenv("RETICULATE_PYTHON")`,
+3. `Sys.getenv("CONDA_PREFIX")`.
+
+`setup_anndata_python()` is a small helper that runs the same
+resolution chain and emits a warning instead of a hard error on
+misconfiguration:
+
+```r
+convert2anndata::setup_anndata_python("my-anndata-env")
+# or:
+Sys.setenv(RETICULATE_PYTHON = "/path/to/python")
+```
+
+Use `check_anndata_python()` at the start of a script to fail fast
+with an actionable message if Python, the `anndata` module, or numpy
+aren't reachable. The path entrypoints
+(`convert_anndata_to_seurat("file.h5ad")` and
+`convert_anndata_to_sce("file.h5ad")`) call this automatically.
+
+### Troubleshooting
+
+**`No Python interpreter available to reticulate.`**
+Reticulate could not find any Python. Set `RETICULATE_PYTHON` or run
+`anndata::install_anndata()`.
+
+**`Python module 'anndata' is not importable.`**
+Reticulate found a Python, but `anndata` isn't installed in it. Either
+install into the active env (`reticulate::py_install("anndata")`) or
+point `RETICULATE_PYTHON` at a different one.
+
+**`ImportError: Error importing numpy: you should not try to import numpy from its source directory`**
+Almost always caused by a polluted `PYTHONPATH`. Common on HPC where
+loading an R module also exports site-packages paths for a *different*
+Python version (e.g. `/app/software/SciPy-bundle/.../python3.11/...`).
+The fix is to clear the variable before launching R:
+
+```sh
+unset PYTHONPATH
+Rscript your-script.R
+```
+
+Or from inside R, **before any reticulate import**:
+
+```r
+Sys.unsetenv("PYTHONPATH")
+```
+
+(after which a fresh R session is safest).
+
+**`use_condaenv("missing-env")` silently "succeeds" then explodes
+later.** With `required = FALSE` (the default), reticulate records
+the preference without validating it. Either pass `required = TRUE`
+or rely on `check_anndata_python()` to fail fast at the next call.
+
+**Differences between conda envs:** `anndata` 0.8 / 0.9 / 0.12 differ
+slightly. The package is tested against 0.8.x. If you hit a method-not-found
+error from inside conversion, check `reticulate::py_config()` and the
+Python `anndata.__version__`.
 
 ## License
 
