@@ -1,0 +1,111 @@
+# Convert an AnnData object (or a .h5ad file) to a Seurat object
+
+Reverse direction of \`convert_to_anndata()\`: takes an AnnData object
+(typically loaded with \`anndata::read_h5ad()\`) or a path to an
+\`.h5ad\` file and constructs a Seurat object. Counts go into the
+\`counts\` layer, \`adata\$X\` into the \`data\` layer, \`adata\$obs\`
+into the meta.data, and entries of \`adata\$obsm\` are attached as
+\`DimReduc\` objects.
+
+## Usage
+
+``` r
+convert_anndata_to_seurat(
+  adata,
+  counts_layer = c("counts", "raw_counts", "raw_count"),
+  assay = "RNA",
+  reduction_map = list(),
+  conda_env = NULL,
+  orig.ident = NULL,
+  use_raw = c("auto", "always", "never"),
+  attach_obsp = TRUE
+)
+```
+
+## Arguments
+
+- adata:
+
+  An AnnData object, OR a character path to an \`.h5ad\` file (in which
+  case it is read with \`anndata::read_h5ad()\`).
+
+- counts_layer:
+
+  Name(s) of the layer in \`adata\$layers\` to use as the counts matrix.
+  May be a single string or a character vector of candidate names; the
+  first one present in \`adata\$layers\` is used. If none are present,
+  \`adata\$X\` is used as counts and no separate \`data\` layer is
+  added. Defaults to \`c("counts", "raw_counts", "raw_count")\`.
+
+- assay:
+
+  Name of the resulting Seurat assay. Defaults to \`"RNA"\`.
+
+- reduction_map:
+
+  Optional named list passed to \`attach_reductions_seurat()\` to
+  override or extend the default obsm-key to Seurat-reduction mapping.
+  See \`default_reduction_map()\`.
+
+- conda_env:
+
+  Optional conda environment to activate before reading the file.
+  Equivalent to calling \`setup_anndata_python(conda_env)\` first. Only
+  relevant when \`adata\` is a path.
+
+- orig.ident:
+
+  Optional value for the \`orig.ident\` column of the resulting Seurat
+  meta.data. If \`NULL\` (default), the value is taken from
+  \`adata\$uns\$conversion_source\` if present, otherwise from the file
+  basename when \`adata\` was passed as a path, otherwise \`"AnnData"\`.
+
+- use_raw:
+
+  How to handle \`adata\$raw\` (a separate AnnData snapshot often used
+  by scanpy to retain raw counts after normalising \`X\`). \`"auto"\`
+  (default) uses \`raw\$X\` as the counts layer when no \`counts_layer\`
+  candidate matched and \`adata\$raw\` is set; \`TRUE\` always uses
+  \`raw\$X\` as counts (and falls back to candidates / \`X\` if it is
+  missing); \`FALSE\` ignores raw entirely.
+
+- attach_obsp:
+
+  Logical. When \`TRUE\` (default), entries of \`adata\$obsp\` (cell x
+  cell pairwise matrices, e.g. nearest-neighbor graphs from
+  \`sc.pp.neighbors\`) are attached as Seurat \`Graphs\`.
+
+## Value
+
+A Seurat object.
+
+## Details
+
+The returned object has the AnnData orientation transposed: Seurat
+stores genes x cells while AnnData stores cells x genes. Cell and
+feature names are taken from \`adata\$obs_names\` and
+\`adata\$var_names\`.
+
+\`adata\$obs\` is attached as \`meta.data\`. \`adata\$var\` is attached
+via \`seurat_obj\[\["RNA"\]\]\[\[\]\] \<- ...\` when present and
+dimensionally compatible.
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+# Path entrypoint:
+seurat_obj <- convert_anndata_to_seurat("pbmc.h5ad")
+
+# Object entrypoint:
+adata <- anndata::read_h5ad("pbmc.h5ad")
+seurat_obj <- convert_anndata_to_seurat(adata)
+
+# Custom layer + extra reductions:
+seurat_obj <- convert_anndata_to_seurat(
+  "pbmc.h5ad",
+  counts_layer = c("counts", "raw_counts"),
+  reduction_map = list(X_my_emb = list(name = "myemb", key = "MyEmb_"))
+)
+} # }
+```
