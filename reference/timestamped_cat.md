@@ -22,5 +22,5 @@ None. The function prints the messages to the console.
 
 ``` r
 timestamped_cat("This is a message.")
-#> [2026-05-19 20:04:50] This is a message.
+#> [2026-05-19 23:13:30] This is a message.
 ```
